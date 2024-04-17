@@ -12,7 +12,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SettingOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { AccountBalance, AccountCircleOutlined, AccountCircleTwoTone } from "@mui/icons-material";
+import { AccountCircleTwoTone } from "@mui/icons-material";
+import { Avatar } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -88,16 +89,17 @@ export default function TopBar({ open, handleDrawerOpen }) {
         >
           <MenuIcon />
         </IconButton>
+        <Box
+          component="img"
+          sx={{
+            height: 18,
+            color:"white",
+          }}
+          src="https://tecmoled.com/wp-content/uploads/2023/03/TECMOLED-Logo-Black.svg"
+          alt="logo tecmoled"
+        />
 
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{ display: { xs: "none", sm: "block" } }}
-        >
-          Tecmoled
-        </Typography>
-
+       
         <Search>
           <SearchIconWrapper>
             <SearchIcon />
@@ -107,17 +109,14 @@ export default function TopBar({ open, handleDrawerOpen }) {
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
-
         <Box flexGrow={1}></Box>
         <Stack direction={"row"}>
-          
           <IconButton color="inherit">
             <SettingOutlinedIcon />
           </IconButton>
           <IconButton color="inherit">
-            <AccountCircleTwoTone/>
+            <AccountCircleTwoTone />
           </IconButton>
-         
         </Stack>
       </Toolbar>
     </AppBar>

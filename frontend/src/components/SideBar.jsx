@@ -12,8 +12,11 @@ import { Delete } from "@mui/icons-material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TeamIcon from "@mui/icons-material/People";
 import List from "@mui/material/List";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
+import Typography from "@mui/material/Typography";
+import { useLocation } from "react-router-dom";
 
+import Avatar from "@mui/material/Avatar";
 
 const drawerWidth = 240;
 
@@ -62,8 +65,11 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
+
 export default function SideBar({ handleDrawerClose, theme, open }) {
-    const items = ["Accueil", "Utilisateurs", "Abonnés"];
+  const items = ["Accueil", "Utilisateurs", "Abonnes"];
+
+  const location = useLocation();
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -77,18 +83,62 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
         </IconButton>
       </DrawerHeader>
       <Divider />
+
+      <Avatar
+        sx={{
+          mx: "auto",
+          width: open ? 88 : 44,
+          height: open ? 88 : 44,
+          mt: 1,
+          my: 1,
+          border: "2px solid grey",
+          transition: "0.25s",
+        }}
+        alt="Travis Howard"
+        src="/static/images/avatar/2.jpg"
+      />
+      <Typography
+        align="center"
+        sx={{
+          fontSize: open ? 15 : 0,
+          transition: "0.25s",
+          color: theme.palette.info.main,
+        }}
+      >
+        {" "}
+        Admin
+      </Typography>
+      <Typography
+        align="center"
+        color="inherit"
+        sx={{ fontSize: open ? 15 : 0, transition: "0.25s" }}
+      >
+        Nom
+      </Typography>
+      <Divider />
       <List>
-      {items.map((text, index) => (
-        <ListItem key={text} disablePadding sx={{ display: "block" }}>
-          <Link
-            to={text.toLowerCase() === 'accueil' ? '/' : `/${text.toLowerCase()}`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
+        {items.map((text, index) => (
+          <ListItem key={text} disablePadding sx={{ display: "block" }}>
             <ListItemButton
+              component={Link}
+              to={
+                text.toLowerCase() === "accueil"
+                  ? "/"
+                  : `/${text.toLowerCase()}`
+              }
+              style={{ textDecoration: "none" }}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                bgcolor:
+                  `/${text.toLowerCase()}` === location.pathname
+                    ? theme.palette.info.main
+                    : null,
+                color:
+                  `/${text.toLowerCase()}` === location.pathname
+                    ? "white"
+                    : null,
               }}
             >
               <ListItemIcon
@@ -96,18 +146,28 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
+                  color:
+                    `/${text.toLowerCase()}` === location.pathname
+                      ? "white"
+                      : null,
                 }}
               >
-                {text.toLowerCase() === 'accueil' ? <HomeIcon /> : index % 2 === 0 ? <TeamIcon /> : <GroupAddIcon />}
+                {text.toLowerCase() === "accueil" ? (
+                  <HomeIcon />
+                ) : index % 2 === 0 ? (
+                  <TeamIcon />
+                ) : (
+                  <GroupAddIcon />
+                )}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
-          </Link>
-        </ListItem>
-      ))}
-    </List>
-    <Divider/>
-    <List>
+          </ListItem>
+        ))}
+      </List>
+
+      <Divider />
+      <List>
         {["Supprimer"].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: "block" }}>
             <Link
