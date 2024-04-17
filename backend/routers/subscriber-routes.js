@@ -10,12 +10,10 @@ const db = require("../models");
  * @access private (only admin)
  */
 route.get(
-  "/users",
+  "/subscribers",
   asyncHandler(async (req, res) => {
-    const users = await db.User.findAll({
-    
-    });
-    res.status(200).json(users);
+    const subscribers = await db.Subscriber.findAll({});
+    res.status(200).json(subscribers);
   })
 );
 

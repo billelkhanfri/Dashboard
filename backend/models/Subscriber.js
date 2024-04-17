@@ -31,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Subscriber.associate = (models) => {
-    // Assuming you have a User model
     Subscriber.belongsTo(models.User, {
       onDelete: "CASCADE", 
     });

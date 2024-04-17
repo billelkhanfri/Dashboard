@@ -1,6 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("User", {
-    username: {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -8,15 +12,21 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+   subscriptionsId: { 
+    type: DataTypes.INTEGER,
+    allowNull: false,
+   }
   });
 
   User.associate = (models) => {
     User.hasMany(models.Subscriber, {
       onDelete: "CASCADE",
     });
-    User.hasOne(models.Profil, {
-      onDelete: "CASCADE",
-    });
+   
   };
 
   return User;
