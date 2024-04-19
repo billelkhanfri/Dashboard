@@ -1,21 +1,8 @@
-import {
-  Toolbar,
-  IconButton,
-  Typography,
-  styled,
-  Stack,
-  Box,
-} from "@mui/material/";
+import { Toolbar, IconButton, Typography, styled } from "@mui/material/";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar from "@mui/material/AppBar";
 
-import SettingOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { AccountCircleTwoTone } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
-import { useState } from "react";
-
 const drawerWidth = 240;
-
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -35,9 +22,8 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 export default function TopBar({ open, handleDrawerOpen }) {
-
   return (
-    <AppBar position="fixed" open={open}>
+    <AppBar position="fixed" open={open} sx={{ backgroundColor: "#2B70A0" }}>
       <Toolbar>
         <IconButton
           color="inherit"
@@ -51,24 +37,9 @@ export default function TopBar({ open, handleDrawerOpen }) {
         >
           <MenuIcon />
         </IconButton>
-        <Box
-          component="img"
-          sx={{
-            height: 18,
-            color: "white",
-          }}
-          src="https://tecmoled.com/wp-content/uploads/2023/03/TECMOLED-Logo-Black.svg"
-          alt="logo tecmoled"
-        />
-
-        
-        <Box flexGrow={1}></Box>
-        <Stack direction={"row"}>
-          
-          <IconButton color="inherit">
-            
-          </IconButton>
-        </Stack>
+        <Typography variant="h6" noWrap component="div">
+          TECMOLED{" "}
+        </Typography>
       </Toolbar>
     </AppBar>
   );

@@ -1,198 +1,168 @@
 import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import SearchIcon from "@mui/icons-material/Search";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { alpha } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
-import {
-  Box,
-  CssBaseline,
-  styled,
-  Typography,
-  List,
-  IconButton,
-} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import Person from "@mui/icons-material/Person";
+import Fade from "@mui/material/Fade";
+import axios from "axios";
+
+import RegisterForm from "../components/RegisterUser";
+import UserUpdateForm from "../components/UserUpdateForm";
+import Button from "@mui/material/Button";
+import { Box, CssBaseline, Typography, List } from "@mui/material";
 import StaticBars from "../components/StaticBars";
+import DrawerHeader from "../mui_components/DrawerHeader";
+import Search from "../mui_components/Search";
+import SearchIconWrapper from "../mui_components/SearchIconWrapper";
+import StyledInputBase from "../mui_components/StyledInputBase";
+import SearchIcon from "@mui/icons-material/Search";
+import { Snackbar, Alert } from "@mui/material";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
+import { columns } from "../mui_components/UserColumns";
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-
- const handleEditUser = (user) => {
-   // Implement edit user logic here
-   console.log("Editing user:", user);
- };
-
- const handleDeleteUser = (user) => {
-   // Implement delete user logic here
-   console.log("Deleting user:", user);
- };
-const columns = [
-  {
-    field: "col1",
-    headerName: "id",
-    width: 80,
-  },
-  {
-    field: "col2",
-    headerName: "Nom",
-    flex: 1,
-  },
-  {
-    field: "col3",
-    headerName: "Prénom",
-    flex: 1,
-  },
-  {
-    field: "col4",
-    headerName: "email",
-    width: 150,
-  },
-  {
-    field: "col5",
-    headerName: "Mot de pass",
-    flex: 1,
-    renderCell: (params) => (
-      <div>{params.value ? "********" : ""}</div> // Display asterisks instead of the actual password
-    ),
-  },
-  {
-    field: "col6",
-    headerName: "SubId",
-    flex: 1,
-  },
-  {
-    field: "actions",
-    headerName: "Actions",
-    width: 120,
-    renderCell: (params) => (
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <IconButton
-          onClick={() => handleEditUser(params.row)}
-          aria-label="edit"
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          onClick={() => handleDeleteUser(params.row)}
-          aria-label="delete"
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Box>
-    ),
-  },
-];
 export default function UserPage() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isRegisterFormOpen, setIsRegisterFormOpen] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
-    console.log(searchTerm);
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+ 
+  const fetchUser = async () => {
     try {
-      const response = await fetch("http://localhost:3000/users/");
-      const data = await response.json();
-      setUsers(data);
+      const response = await axios.get("http://localhost:3000/tecmoled/");
+      let allUsers = [];
+
+      // Parcourir chaque objet de la société
+      response.data.forEach((company) => {
+        // Extraire les utilisateurs de la société actuelle et les ajouter au tableau allUsers
+        allUsers = allUsers.concat(
+          company.users.map((user) => ({
+            ...user,
+            companyName: company.clientName, // Ajouter le nom de la société à chaque utilisateur
+          }))
+        );
+      });
+
+      // Mettre à jour l'état avec les utilisateurs associés à leurs sociétés
+      setUsers(allUsers);
+
+      console.log(allUsers);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching subscribers:", error);
     }
   };
- 
 
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const toggleRegisterForm = () => {
+    setIsRegisterFormOpen((prev) => !prev);
+  };
+  const handleRegistrationSuccess = () => {
+    console.log("Utilisateur Ajouté");
+    fetchUsers(); // Refresh user list after registration
+    setIsRegisterFormOpen(false); // Close the registration form
+    setRegistrationSuccess(true); // Set registration success state
+  };
   return (
     <>
-      <Box sx={{ display: "flex" }}>
+      <Box display="flex">
         <CssBaseline />
         <StaticBars />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
-          <Typography variant="h4" gutterBottom> Utilisateurs         </Typography>
+
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography
+              variant="h2"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                fontSize: "2rem",
+                marginTop: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
+              Utilisateurs
+            </Typography>
+
+            <Box sx={{ mt: 2 }}>
+              <Button
+                variant="contained"
+                onClick={toggleRegisterForm}
+                color="success"
+              >
+                <AddIcon></AddIcon>
+                <Person></Person>
+              </Button>
+            </Box>
+            <Snackbar
+              open={registrationSuccess}
+              autoHideDuration={6000}
+              onClose={() => setRegistrationSuccess(false)}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <Alert
+                onClose={() => setRegistrationSuccess(false)}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+                Utilisateur Ajouté
+              </Alert>
+            </Snackbar>
+          </Box>
+
+          <Fade in={isRegisterFormOpen}>
+            <div>
+              {isRegisterFormOpen && (
+                <RegisterForm
+                  handleRegistrationSuccess={handleRegistrationSuccess}
+                />
+              )}
+            </div>
+          </Fade>
 
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Nom de l'utilisateur"
               inputProps={{ "aria-label": "search" }}
               value={searchTerm}
               onChange={handleSearchInputChange}
             />
           </Search>
-
           <List>
             <div style={{ height: 800, width: "100%" }}>
               <DataGrid
                 rows={users
-                  .filter((user) => {
+                  .filter((u) => {
                     const searchTermLower = searchTerm.toLowerCase();
-                    if (searchTermLower === "") return true; // Return true if search term is empty
-                    const usernameLower = user.lastName.toLowerCase();
+                    if (searchTermLower === "") return true;
+                    const usernameLower = u.lastName.toLowerCase();
                     for (let i = 0; i < searchTermLower.length; i++) {
                       if (usernameLower[i] !== searchTermLower[i]) return false;
                     }
-                    return true; // If all characters match, return true
+                    return true;
                   })
-                  .map((user) => ({
-                    id: user.id,
-                    col1: user.id,
-                    col2: user.lastName,
-                    col3: user.firstName,
-                    col4: user.email,
-                    col5: user.password,
-                    col6: user.subscriptionsId,
+                  .map((u) => ({
+                    id: u.id,
+                    col1: u.id,
+                    col2: u.lastName,
+                    col3: u.firstName,
+                    col4: u.email,
+                    col5: u.password,
+                    col6: u.companyName,
                   }))}
                 columns={columns}
               />

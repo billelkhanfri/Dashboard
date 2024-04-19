@@ -1,33 +1,39 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define("User", {
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
+  const user = sequelize.define(
+    "user",
+    {
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-   subscriptionsId: { 
-    type: DataTypes.INTEGER,
-    allowNull: false,
-   }
-  });
+    {
+      // Options object
+      freezeTableName: true, // Disable auto table creation
+      timestamps: false, // Disable createdAt and updatedAt fields
+    }
+  );
 
-  User.associate = (models) => {
-    User.hasMany(models.Subscriber, {
+  user.associate = (models) => {
+    user.belongsTo(models.subscription, {
+      foreignKey: "subscriptionsId", // This will create a subscriptionsId column in the User table
       onDelete: "CASCADE",
     });
-   
   };
 
-  return User;
+  // Disable automatic synchronization with the database
+  sequelize.sync({ force: false }); // Set force to false to prevent dropping tables
+  return user;
 };

@@ -13,10 +13,8 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TeamIcon from "@mui/icons-material/People";
 import List from "@mui/material/List";
 import HomeIcon from "@mui/icons-material/Home";
-import Typography from "@mui/material/Typography";
 import { useLocation } from "react-router-dom";
 
-import Avatar from "@mui/material/Avatar";
 
 const drawerWidth = 240;
 
@@ -84,37 +82,7 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
       </DrawerHeader>
       <Divider />
 
-      <Avatar
-        sx={{
-          mx: "auto",
-          width: open ? 88 : 44,
-          height: open ? 88 : 44,
-          mt: 1,
-          my: 1,
-          border: "2px solid grey",
-          transition: "0.25s",
-        }}
-        alt="Travis Howard"
-        src="/static/images/avatar/2.jpg"
-      />
-      <Typography
-        align="center"
-        sx={{
-          fontSize: open ? 15 : 0,
-          transition: "0.25s",
-          color: theme.palette.info.main,
-        }}
-      >
-        {" "}
-        Admin
-      </Typography>
-      <Typography
-        align="center"
-        color="inherit"
-        sx={{ fontSize: open ? 15 : 0, transition: "0.25s" }}
-      >
-        Nom
-      </Typography>
+     
       <Divider />
       <List>
         {items.map((text, index) => (
@@ -133,7 +101,7 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                 px: 2.5,
                 bgcolor:
                   `/${text.toLowerCase()}` === location.pathname
-                    ? theme.palette.info.main
+                    ? "#2B70A0"
                     : null,
                 color:
                   `/${text.toLowerCase()}` === location.pathname

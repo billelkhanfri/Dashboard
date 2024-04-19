@@ -1,157 +1,57 @@
 import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { alpha } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
-import {
-  Box,
-  CssBaseline,
-  styled,
-  Typography,
-  List,
-  IconButton,
-} from "@mui/material";
+import axios from "axios";
+import DrawerHeader from "../mui_components/DrawerHeader";
+import Search from "../mui_components/Search";
+import SearchIconWrapper from "../mui_components/SearchIconWrapper";
+import StyledInputBase from "../mui_components/StyledInputBase";
+import AddIcon from "@mui/icons-material/Add";
+import Person from "@mui/icons-material/Person";
+import Fade from "@mui/material/Fade";
+import { Snackbar, Alert } from "@mui/material";
+import Button from "@mui/material/Button";
+import SubscriberForm from "../components/RegisterSubscriber";
+import { green, red } from "@mui/material/colors";
+
+import { Box, CssBaseline, Typography, List } from "@mui/material";
 import StaticBars from "../components/StaticBars";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-const handleEditSubscriber = (subscriber) => {
-  console.log("Editing Subscriber:", subscriber);
-};
-
-const handleDeleteSubscriber = (subscriber) => {
-  console.log("Deleting Subscriber:", subscriber);
-};
-const columns = [
-  {
-    field: "col1",
-    headerName: "id",
-    width: 80,
-  },
-  {
-    field: "col2",
-    headerName: "Client",
-    flex: 1,
-  },
-  {
-    field: "col3",
-    headerName: "Etat",
-    flex: 1,
-  },
-  {
-    field: "col4",
-    headerName: "Date de payment",
-    width: 150,
-  },
-  {
-    field: "col5",
-    headerName: "Date de début",
-    flex: 1,
-  },
-  { field: "col6", headerName: "Date de fin", flex: 1 },
-
-  {
-    field: "col7",
-    headerName: "Max Utilisateurs",
-    flex: 1,
-  },
-  {
-    field: "col8",
-    headerName: "Utilisateurs en ligne",
-    flex: 1,
-  },
-  {
-    field: "actions",
-    headerName: "Actions",
-    width: 120,
-    renderCell: (params) => (
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <IconButton
-          onClick={() => handleEditSubscriber(params.row)}
-          aria-label="edit"
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          onClick={() => handleDeleteSubscriber(params.row)}
-          aria-label="delete"
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Box>
-    ),
-  },
-];
+import { columns } from "../mui_components/SubscribersColumns";
 
 export default function SubscriberPage() {
   const [subscribers, setSubscribers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSubscriberFormOpen, setIsSubscriberFormOpen] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
-    console.log(searchTerm);
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchSubscribers = async () => {
     try {
-      const response = await fetch("http://localhost:3000/subscribers/");
-      const data = await response.json();
-      setSubscribers(data);
+      const response = await axios.get("http://localhost:3000/tecmoled/");
+      setSubscribers(response.data);
     } catch (error) {
       console.error("Error fetching subscribers:", error);
     }
   };
 
+  useEffect(() => {
+    fetchSubscribers();
+  }, []);
+
+  const toggleSubscriberForm = () => {
+    setIsSubscriberFormOpen((prev) => !prev);
+  };
+
+  const handleRegistrationSuccess = () => {
+    console.log("Abonné ajouter");
+    fetchSubscribers(); // Refresh user list after registration
+    setIsSubscriberFormOpen(false); // Close the registration form
+    setRegistrationSuccess(true); // Set registration success state
+  };
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -159,10 +59,60 @@ export default function SubscriberPage() {
         <StaticBars />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
-          <Typography variant="h4" gutterBottom>
-            Abonnés
-          </Typography>
 
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography
+              variant="h2"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                fontSize: "2rem",
+                marginTop: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
+              Abonnées
+            </Typography>
+
+            <Box sx={{ mt: 2 }}>
+              <Button
+                variant="contained"
+                onClick={toggleSubscriberForm}
+                color="secondary"
+              >
+                <AddIcon></AddIcon>
+                <Person></Person>
+              </Button>
+            </Box>
+            <Snackbar
+              open={registrationSuccess}
+              autoHideDuration={6000}
+              onClose={() => setRegistrationSuccess(false)}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <Alert
+                onClose={() => setRegistrationSuccess(false)}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+              Abonné Ajouté
+              </Alert>
+            </Snackbar>
+          </Box>
+
+          <Fade in={isSubscriberFormOpen}>
+            <div>
+              {isSubscriberFormOpen && (
+                <SubscriberForm
+                  handleRegistrationSuccess={handleRegistrationSuccess}
+                />
+              )}
+            </div>
+          </Fade>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -198,6 +148,9 @@ export default function SubscriberPage() {
                     col6: subscriber.endDate,
                     col7: subscriber.maxUser,
                     col8: subscriber.nbrUserOnline,
+                    backgroundColor: subscriber.subscrState
+                      ? green[100]
+                      : red[100], // Utilisez la couleur verte si actif, sinon rouge
                   }))}
                 columns={columns}
               />

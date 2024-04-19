@@ -1,12 +1,16 @@
-import * as React from "react";
+import {useState} from "react"
 import { useTheme } from "@mui/material/styles";
 import TopBar from "./TopBar";
 import SideBar from "./SideBar";
 
 
+
+
 export default function StaticBars() {
+
+  
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -15,6 +19,8 @@ export default function StaticBars() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+   
 
 
   

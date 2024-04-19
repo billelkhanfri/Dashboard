@@ -1,6 +1,6 @@
 import StaticBars from "../components/StaticBars";
 import Box from "@mui/material/Box";
-import { Toolbar, IconButton, Typography, styled } from "@mui/material/";
+import {  Typography, styled } from "@mui/material/";
 import CssBaseline from "@mui/material/CssBaseline";
 
 export default function Home() {
@@ -20,7 +20,23 @@ export default function Home() {
         <StaticBars></StaticBars>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
-          <h1> hello from Home</h1>
+          <Typography
+            variant="h2"
+            gutterBottom
+            sx={{
+              fontWeight: "bold",
+              fontSize: "2rem",
+              marginTop: "1rem",
+              marginBottom: "1rem",
+            }}
+          >
+            Tableau de board{" "}
+          </Typography>{" "}
+          <Typography>
+            {" "}
+            On peut représenter les données par des graphiques pour faciliter la
+            lecture{" "}
+          </Typography>{" "}
         </Box>
       </Box>
       ;
