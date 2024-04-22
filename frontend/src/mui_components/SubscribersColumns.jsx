@@ -1,20 +1,38 @@
-import { Box, IconButton } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box} from "@mui/material";
+
 import { green, red } from "@mui/material/colors";
 
 const columns = [
   {
     field: "col1",
     headerName: "id",
-    width: 80,
     headerAlign: "center",
+
+    renderCell: (params) => (
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {params.value}
+      </div>
+    ),
   },
   {
     field: "col2",
     headerName: "Client",
     flex: 1,
+
     headerAlign: "center",
+    renderCell: (params) => (
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {params.value}
+      </div>
+    ),
   },
   {
     field: "col3",
@@ -45,6 +63,15 @@ const columns = [
     headerName: "Date de payment",
     width: 150,
     headerAlign: "center",
+    renderCell: (params) => (
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {params.value}
+      </div>
+    ),
   },
 
   {
@@ -52,51 +79,41 @@ const columns = [
     headerName: "Date de début",
     flex: 1,
     headerAlign: "center",
+    width: 150,
+
+    renderCell: (params) => (
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {params.value}
+      </div>
+    ),
   },
   { field: "col6", headerName: "Date de fin", flex: 1 },
 
   {
     field: "col7",
     headerName: "Max Utilisateurs",
+    width: 80,
+
     flex: 1,
     headerAlign: "center",
-  },
-  {
-    field: "col8",
-    headerName: "Utilisateurs en ligne",
-    flex: 1,
-    headerAlign: "center",
-  },
-  {
-    field: "actions",
-    headerName: "Actions",
-    width: 120,
     renderCell: (params) => (
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <IconButton
-          onClick={() => handleEditSubscriber(params.row)}
-          aria-label="edit"
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          onClick={() => handleDeleteSubscriber(params.row)}
-          aria-label="delete"
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Box>
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {params.value}
+      </div>
     ),
-    headerAlign: "center",
   },
+  
+ 
 ];
 
-const handleEditSubscriber = (subscriber) => {
-  console.log("Editing Subscriber:", subscriber);
-};
 
-const handleDeleteSubscriber = (subscriber) => {
-  console.log("Deleting Subscriber:", subscriber);
-};
 
 export { columns };

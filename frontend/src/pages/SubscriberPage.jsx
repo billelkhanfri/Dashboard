@@ -7,23 +7,28 @@ import Search from "../mui_components/Search";
 import SearchIconWrapper from "../mui_components/SearchIconWrapper";
 import StyledInputBase from "../mui_components/StyledInputBase";
 import AddIcon from "@mui/icons-material/Add";
-import Person from "@mui/icons-material/Person";
-import Fade from "@mui/material/Fade";
-import { Snackbar, Alert } from "@mui/material";
 import Button from "@mui/material/Button";
 import SubscriberForm from "../components/RegisterSubscriber";
-import { green, red } from "@mui/material/colors";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import UpdateSubscriberForm from "../components/UpdateSubscriberForm"; 
 
-import { Box, CssBaseline, Typography, List } from "@mui/material";
+import { Box, CssBaseline, Typography, List, IconButton } from "@mui/material";
 import StaticBars from "../components/StaticBars";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 import { columns } from "../mui_components/SubscribersColumns";
 
 export default function SubscriberPage() {
   const [subscribers, setSubscribers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isSubscriberFormOpen, setIsSubscriberFormOpen] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [updateFormOpen, setUpdateFormOpen] = useState(false); 
+  const [selectedSubscriber, setSelectedSubscriber] = useState(null); 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("success");
 
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -43,15 +48,67 @@ export default function SubscriberPage() {
   }, []);
 
   const toggleSubscriberForm = () => {
-    setIsSubscriberFormOpen((prev) => !prev);
+    setFormOpen((prev) => !prev);
   };
 
-  const handleRegistrationSuccess = () => {
-    console.log("Abonné ajouter");
-    fetchSubscribers(); // Refresh user list after registration
-    setIsSubscriberFormOpen(false); // Close the registration form
-    setRegistrationSuccess(true); // Set registration success state
+ 
+
+  const handleRegistrationSuccess = (message, severity) => {
+    fetchSubscribers();
+    setAlertSeverity(severity);
+    setAlertMessage(message);
+    alert(message);
+    if (severity === "success") {
+      setFormOpen(false);
+    }
   };
+
+  const handleDeleteSubscriber = async (subscriberId) => {
+    const confirmation = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer cet abonné ?"
+    );
+
+    if (confirmation) {
+      try {
+        await axios.delete(
+          `http://localhost:3000/tecmoled/subscriber/${subscriberId}`
+        );
+        setSubscribers((prevSubscribers) =>
+          prevSubscribers.filter((subscriber) => subscriber.id !== subscriberId)
+        );
+        setDeleteSuccess(true); // Set state to indicate successful deletion
+      } catch (error) {
+        console.error("Erreur lors de la suppression de l'abonné:", error);
+      }
+    }
+  };
+
+
+
+
+   const toggleUpdateSubscriberForm = (subscriber) => {
+     // Fonction pour afficher/masquer le formulaire de mise à jour
+     setUpdateFormOpen((prev) => !prev);
+     setSelectedSubscriber(subscriber); // Stocke les données de l'abonné sélectionné
+   };
+  const handleEditSubscriber = (subscriberId) => {
+    console.log("edited " + subscriberId);
+    // Recherche de l'abonné à partir de l'ID et affichage du formulaire de mise à jour
+    const subscriberToUpdate = subscribers.find(
+      (subscriber) => subscriber.id === subscriberId
+    );
+    toggleUpdateSubscriberForm(subscriberToUpdate);
+  };
+
+  const handleUpdateSuccess = (message, severity) => {
+    // Fonction pour gérer la mise à jour réussie
+    fetchSubscribers();
+    setAlertSeverity(severity);
+    setAlertMessage(message);
+    alert(message);
+    setUpdateFormOpen(false); 
+  };
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -60,11 +117,14 @@ export default function SubscriberPage() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
 
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
+          <Box display="flex" alignItems="center" gap={2}>
+            <Button
+              variant="contained"
+              onClick={toggleSubscriberForm}
+              color="secondary"
+            >
+              <AddIcon></AddIcon>
+            </Button>
             <Typography
               variant="h2"
               gutterBottom
@@ -77,42 +137,38 @@ export default function SubscriberPage() {
             >
               Abonnées
             </Typography>
-
-            <Box sx={{ mt: 2 }}>
-              <Button
-                variant="contained"
-                onClick={toggleSubscriberForm}
-                color="secondary"
-              >
-                <AddIcon></AddIcon>
-                <Person></Person>
-              </Button>
-            </Box>
-            <Snackbar
-              open={registrationSuccess}
-              autoHideDuration={6000}
-              onClose={() => setRegistrationSuccess(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-              <Alert
-                onClose={() => setRegistrationSuccess(false)}
-                severity="success"
-                sx={{ width: "100%" }}
-              >
-              Abonné Ajouté
-              </Alert>
-            </Snackbar>
           </Box>
+          <Snackbar
+            open={deleteSuccess}
+            autoHideDuration={6000}
+            onClose={() => setDeleteSuccess(false)}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <MuiAlert
+              onClose={() => setDeleteSuccess(false)}
+              severity="success"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              Abonné supprimé avec succès
+            </MuiAlert>
+          </Snackbar>
+          {formOpen && (
+            <SubscriberForm
+              subscription={subscribers}
+              fetchSubscriber={fetchSubscribers}
+              handleRegistrationSuccess={handleRegistrationSuccess}
+              setFormOpen={setFormOpen}
+            />
+          )}
+          {/* Affichage conditionnel du formulaire de mise à jour */}
+          {updateFormOpen && (
+            <UpdateSubscriberForm
+              subscriber={selectedSubscriber}
+              handleUpdateSuccess={handleUpdateSuccess}
+            />
+          )}
 
-          <Fade in={isSubscriberFormOpen}>
-            <div>
-              {isSubscriberFormOpen && (
-                <SubscriberForm
-                  handleRegistrationSuccess={handleRegistrationSuccess}
-                />
-              )}
-            </div>
-          </Fade>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -148,11 +204,39 @@ export default function SubscriberPage() {
                     col6: subscriber.endDate,
                     col7: subscriber.maxUser,
                     col8: subscriber.nbrUserOnline,
-                    backgroundColor: subscriber.subscrState
-                      ? green[100]
-                      : red[100], // Utilisez la couleur verte si actif, sinon rouge
                   }))}
-                columns={columns}
+                columns={[
+                  ...columns,
+                  {
+                    field: "actions",
+                    headerName: "Actions",
+                    width: 240, // Ajustement de la largeur pour accueillir les deux icônes
+                    renderCell: (params) => (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          gap: 2,
+                          width: "100%", // Ajustement pour aligner correctement les icônes
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleDeleteSubscriber(params.row.id)}
+                          aria-label="delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleEditSubscriber(params.row.id)}
+                          aria-label="edit"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Box>
+                    ),
+                    headerAlign: "center",
+                  },
+                ]}
               />
             </div>
           </List>

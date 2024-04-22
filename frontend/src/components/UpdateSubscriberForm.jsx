@@ -13,16 +13,11 @@ import axios from "axios";
 import SendIcon from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
 
-export default function SubscriberForm({ handleRegistrationSuccess }) {
-  const [formData, setFormData] = useState({
-    clientName: "",
-    subscrState: "", 
-    paymentDate: "", 
-    startDate: "", 
-    endDate: "", 
-    maxUser: "",
-    nbrUserOnline: "",
-  });
+export default function UpdateSubscriberForm({
+  subscriber,
+  handleUpdateSuccess,
+}) {
+  const [formData, setFormData] = useState(subscriber);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,35 +25,32 @@ export default function SubscriberForm({ handleRegistrationSuccess }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Format date fields before sending to the server
-      const formattedFormData = {
-        ...formData,
-        paymentDate: formatDate(formData.paymentDate),
-        startDate: formatDate(formData.startDate),
-        endDate: formatDate(formData.endDate),
-      };
+    const confirmation = window.confirm(
+      "Êtes-vous sûr de vouloir modifier cet abonné ?"
+    );
 
-      const response = await axios.post(
-        "http://localhost:3000/tecmoled/subscriber",
-        formattedFormData
-      );
-      setFormData({
-        clientName: "",
-        subscrState: "",
-        paymentDate: "",
-        startDate: "",
-        endDate: "",
-        maxUser: "",
-        nbrUserOnline: "",
-      });
+    if (confirmation) {
+      e.preventDefault();
+      try {
+        // Format date fields before sending to the server
+        const formattedFormData = {
+          ...formData,
+          paymentDate: formatDate(formData.paymentDate),
+          startDate: formatDate(formData.startDate),
+          endDate: formatDate(formData.endDate),
+        };
 
-      console.log("Registration successful:", response.data.success);
-      handleRegistrationSuccess(response.data.success, "success");
-    } catch (error) {
-      console.error("Registration failed:", error.response.data);
-      handleRegistrationSuccess(error.response.data.error, "error");
+        const response = await axios.put(
+          `http://localhost:3000/tecmoled/subscriber/${subscriber.id}`,
+          formattedFormData
+        );
+
+        console.log("Update successful:", response.data.message);
+        handleUpdateSuccess(response.data.message, "success");
+      } catch (error) {
+        console.error("Update failed:", error.response.data);
+        handleUpdateSuccess(error.response.data.error, "error");
+      }
     }
   };
 
@@ -77,7 +69,7 @@ export default function SubscriberForm({ handleRegistrationSuccess }) {
         height="100%"
       >
         <Typography variant="h6" gutterBottom>
-          Ajouter un nouveau abonné{" "}
+          Modifier Abonné
         </Typography>
       </Box>
       <form onSubmit={handleSubmit}>
@@ -109,6 +101,7 @@ export default function SubscriberForm({ handleRegistrationSuccess }) {
             <MenuItem value={false}>Non</MenuItem>
           </Select>
         </FormControl>
+
         <FormControl fullWidth margin="normal">
           <InputLabel
             htmlFor="paymentDate"
@@ -218,7 +211,7 @@ export default function SubscriberForm({ handleRegistrationSuccess }) {
             color="secondary"
             endIcon={<SendIcon />}
           >
-            Ajouter
+            Mettre à jour
           </Button>
         </Box>
       </form>

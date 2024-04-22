@@ -8,22 +8,17 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
- 
 } from "@mui/material";
 import axios from "axios";
-import SendIcon from "@mui/icons-material/Send";
-import Divider from "@mui/material/Divider";
 
-export default function RegisterForm({
-  subscription,
-  handleRegistrationSuccess,
-}) {
+export default function UpdateUserForm({ user, handleUpdateSuccess, subscription }) {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    subscriptionsId: "",
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    password: user.password,
+    subscriptionsId: user.subscriptionsId,
   });
 
   const handleChange = (e) => {
@@ -33,23 +28,16 @@ export default function RegisterForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3000/tecmoled/user",
+      const response = await axios.put(
+        `http://localhost:3000/tecmoled/user/${formData.id}`,
         formData
       );
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        subscriptionsId: "",
-      });
 
-      console.log("Registration successful:", response.data.success);
-      handleRegistrationSuccess(response.data.success, "success");
+      console.log("Update successful:", response.data.success);
+      handleUpdateSuccess(response.data.success, "success");
     } catch (error) {
-      console.error("Registration failed:", error.response.data);
-      handleRegistrationSuccess(error.response.data.error, "error");
+      console.error("Update failed:", error.response.data);
+      handleUpdateSuccess(error.response.data.error, "error");
     }
   };
 
@@ -62,7 +50,17 @@ export default function RegisterForm({
         height="100%"
       >
         <Typography variant="h6" gutterBottom>
-          Ajouter un nouveau utilisateur{" "}
+          Mettre à jour l'utilisateur :{" "}
+          <span style={{ color: "green" }}>
+            {formData.firstName} {formData.lastName}
+          </span>{" "}
+          de{" "}
+          <span style={{ color: "blue" }}>
+            {
+              subscription.find((sub) => sub.id === formData.subscriptionsId)
+                ?.clientName
+            }
+          </span>
         </Typography>
       </Box>
       <form onSubmit={handleSubmit}>
@@ -126,20 +124,11 @@ export default function RegisterForm({
           </Select>
         </FormControl>
         <Box sx={{ my: 3, display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="success"
-            endIcon={<SendIcon />}
-          >
-            Ajouter
+          <Button type="submit" variant="contained" color="primary">
+            Mettre à jour
           </Button>
         </Box>
       </form>
-
-      <Box>
-        <Divider sx={{ my: 2 }} />
-      </Box>
     </Box>
   );
 }

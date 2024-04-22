@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      subscriptionsId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     {
       // Options object

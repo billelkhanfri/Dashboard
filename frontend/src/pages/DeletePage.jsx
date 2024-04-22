@@ -20,7 +20,7 @@ export default function DeletePage() {
         <StaticBars></StaticBars>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
-          <h1> hello from delete page</h1>
+          <h1> Affichage des suppression</h1>
         </Box>
       </Box>
       ;

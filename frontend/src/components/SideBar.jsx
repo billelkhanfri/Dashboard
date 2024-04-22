@@ -15,7 +15,6 @@ import List from "@mui/material/List";
 import HomeIcon from "@mui/icons-material/Home";
 import { useLocation } from "react-router-dom";
 
-
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -82,7 +81,6 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
       </DrawerHeader>
       <Divider />
 
-     
       <Divider />
       <List>
         {items.map((text, index) => (
@@ -100,13 +98,31 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
                 bgcolor:
-                  `/${text.toLowerCase()}` === location.pathname
+                  `/${text.toLowerCase()}` === location.pathname ||
+                  (text.toLowerCase() === "accueil" &&
+                    location.pathname === "/")
                     ? "#2B70A0"
                     : null,
                 color:
-                  `/${text.toLowerCase()}` === location.pathname
-                    ? "white"
+                  `/${text.toLowerCase()}` === location.pathname ||
+                  (text.toLowerCase() === "accueil" &&
+                    location.pathname === "/")
+                    ? "#fff"
                     : null,
+                "&:hover": {
+                  bgcolor:
+                    `/${text.toLowerCase()}` === location.pathname ||
+                    (text.toLowerCase() === "accueil" &&
+                      location.pathname === "/")
+                      ? "#2B70A0"
+                      : null,
+                  color:
+                    `/${text.toLowerCase()}` === location.pathname ||
+                    (text.toLowerCase() === "accueil" &&
+                      location.pathname === "/")
+                      ? "white"
+                      : null,
+                },
               }}
             >
               <ListItemIcon
@@ -115,9 +131,19 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
                   color:
-                    `/${text.toLowerCase()}` === location.pathname
-                      ? "white"
+                    `/${text.toLowerCase()}` === location.pathname ||
+                    (text.toLowerCase() === "accueil" &&
+                      location.pathname === "/")
+                      ? "#fff"
                       : null,
+                  "&:hover": {
+                    color:
+                      `/${text.toLowerCase()}` === location.pathname ||
+                      (text.toLowerCase() === "accueil" &&
+                        location.pathname === "/")
+                        ? "#fff"
+                        : null,
+                  },
                 }}
               >
                 {text.toLowerCase() === "accueil" ? (
@@ -135,7 +161,7 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
       </List>
 
       <Divider />
-      <List>
+      {/* <List>
         {["Supprimer"].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: "block" }}>
             <Link
@@ -163,7 +189,7 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
             </Link>
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </Drawer>
   );
 }

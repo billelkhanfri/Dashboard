@@ -1,40 +1,49 @@
 import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
-import Person from "@mui/icons-material/Person";
-import Fade from "@mui/material/Fade";
 import axios from "axios";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  Box,
+  Button,
+  CssBaseline,
+  IconButton,
+  List,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import RegisterForm from "../components/RegisterUser";
-import UserUpdateForm from "../components/UserUpdateForm";
-import Button from "@mui/material/Button";
-import { Box, CssBaseline, Typography, List } from "@mui/material";
+import UpdateUserForm from "../components/UpdateUserForm"; // Import du formulaire de mise à jour des utilisateurs
 import StaticBars from "../components/StaticBars";
 import DrawerHeader from "../mui_components/DrawerHeader";
 import Search from "../mui_components/Search";
 import SearchIconWrapper from "../mui_components/SearchIconWrapper";
 import StyledInputBase from "../mui_components/StyledInputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { Snackbar, Alert } from "@mui/material";
-
+import { Alert } from "@mui/material";
 import { columns } from "../mui_components/UserColumns";
 
 export default function UserPage() {
   const [users, setUsers] = useState([]);
+  const [subscription, setSubscription] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isRegisterFormOpen, setIsRegisterFormOpen] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [updateFormOpen, setUpdateFormOpen] = useState(false); // Nouvel état pour gérer l'affichage du formulaire de mise à jour
+  const [selectedUser, setSelectedUser] = useState(null); // Nouvel état pour stocker les données de l'utilisateur sélectionné pour la mise à jour
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("success");
 
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
- 
   const fetchUser = async () => {
     try {
       const response = await axios.get("http://localhost:3000/tecmoled/");
       let allUsers = [];
-
+      setSubscription(response.data);
       // Parcourir chaque objet de la société
       response.data.forEach((company) => {
         // Extraire les utilisateurs de la société actuelle et les ajouter au tableau allUsers
@@ -48,27 +57,70 @@ export default function UserPage() {
 
       // Mettre à jour l'état avec les utilisateurs associés à leurs sociétés
       setUsers(allUsers);
-
-      console.log(allUsers);
     } catch (error) {
-      console.error("Error fetching subscribers:", error);
+      // Si la requête échoue, afficher le message d'erreur
+      console.log(error);
     }
   };
-
 
   useEffect(() => {
     fetchUser();
   }, []);
 
   const toggleRegisterForm = () => {
-    setIsRegisterFormOpen((prev) => !prev);
+    setFormOpen((prev) => !prev);
   };
-  const handleRegistrationSuccess = () => {
-    console.log("Utilisateur Ajouté");
-    fetchUsers(); // Refresh user list after registration
-    setIsRegisterFormOpen(false); // Close the registration form
-    setRegistrationSuccess(true); // Set registration success state
+
+  const handleRegistrationSuccess = (message, severity) => {
+    fetchUser();
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    alert(message);
+
+    if (severity === "success") {
+      setFormOpen(false);
+    }
   };
+
+  const toggleUpdateUserForm = (user) => {
+    // Fonction pour afficher/masquer le formulaire de mise à jour
+    setUpdateFormOpen((prev) => !prev);
+    setSelectedUser(user); // Stocke les données de l'utilisateur sélectionné
+  };
+
+  const handleUpdateSuccess = (message, severity) => {
+    // Fonction pour gérer la mise à jour réussie
+    fetchUser();
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    alert(message);
+    setUpdateFormOpen(false);
+  };
+
+  const handleDeleteUser = async (id) => {
+    const confirmation = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+    );
+
+    if (confirmation) {
+      try {
+        await axios.delete(`http://localhost:3000/tecmoled/user/${id}`);
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+        console.log("Utilisateur supprimé avec succès");
+        setDeleteSuccess(true); // Définit deleteSuccess sur true pour afficher l'alerte
+      } catch (error) {
+        console.error("Erreur lors de la suppression de l'utilisateur:", error);
+      }
+    }
+  };
+
+  const handleEditUser = (userId) => {
+    console.log("edited " + userId);
+    // Recherche de l'utilisateur à partir de l'ID et affichage du formulaire de mise à jour
+    const userToUpdate = users.find((user) => user.id === userId);
+    toggleUpdateUserForm(userToUpdate);
+  };
+
   return (
     <>
       <Box display="flex">
@@ -77,11 +129,14 @@ export default function UserPage() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
 
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
+          <Box display="flex" alignItems="center" gap={2}>
+            <Button
+              variant="contained"
+              onClick={toggleRegisterForm}
+              color="success"
+            >
+              <AddIcon></AddIcon>
+            </Button>
             <Typography
               variant="h2"
               gutterBottom
@@ -94,43 +149,40 @@ export default function UserPage() {
             >
               Utilisateurs
             </Typography>
-
-            <Box sx={{ mt: 2 }}>
-              <Button
-                variant="contained"
-                onClick={toggleRegisterForm}
-                color="success"
-              >
-                <AddIcon></AddIcon>
-                <Person></Person>
-              </Button>
-            </Box>
+          </Box>
+          <Box sx={{ mt: 2 }}>
             <Snackbar
-              open={registrationSuccess}
+              open={deleteSuccess}
               autoHideDuration={6000}
-              onClose={() => setRegistrationSuccess(false)}
+              onClose={() => setDeleteSuccess(false)}
               anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
               <Alert
-                onClose={() => setRegistrationSuccess(false)}
+                onClose={() => setDeleteSuccess(false)}
                 severity="success"
+                variant="filled"
                 sx={{ width: "100%" }}
               >
-                Utilisateur Ajouté
+                Utilisateur supprimé avec succès
               </Alert>
             </Snackbar>
           </Box>
-
-          <Fade in={isRegisterFormOpen}>
-            <div>
-              {isRegisterFormOpen && (
-                <RegisterForm
-                  handleRegistrationSuccess={handleRegistrationSuccess}
-                />
-              )}
-            </div>
-          </Fade>
-
+          {formOpen && (
+            <RegisterForm
+              subscription={subscription}
+              fetchUser={fetchUser}
+              handleRegistrationSuccess={handleRegistrationSuccess}
+              setFormOpen={setFormOpen}
+            />
+          )}
+          {/* Affichage conditionnel du formulaire de mise à jour */}
+          {updateFormOpen && (
+            <UpdateUserForm
+              subscription={subscription}
+              user={selectedUser}
+              handleUpdateSuccess={handleUpdateSuccess}
+            />
+          )}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -164,7 +216,38 @@ export default function UserPage() {
                     col5: u.password,
                     col6: u.companyName,
                   }))}
-                columns={columns}
+                columns={[
+                  ...columns,
+                  {
+                    field: "actions",
+                    headerName: "Actions",
+                    width: 240, // Ajustement de la largeur pour accueillir les deux icônes
+                    renderCell: (params) => (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          gap: 2,
+                          width: "100%", // Ajustement pour aligner correctement les icônes
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleDeleteUser(params.row.id)}
+                          aria-label="delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleEditUser(params.row.id)}
+                          aria-label="edit"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Box>
+                    ),
+                    headerAlign: "center",
+                  },
+                ]}
               />
             </div>
           </List>
