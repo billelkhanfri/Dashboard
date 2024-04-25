@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
-import DrawerHeader from "../mui_components/DrawerHeader";
 import Search from "../mui_components/Search";
 import SearchIconWrapper from "../mui_components/SearchIconWrapper";
 import StyledInputBase from "../mui_components/StyledInputBase";
@@ -12,12 +11,9 @@ import SubscriberForm from "../components/RegisterSubscriber";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdateSubscriberForm from "../components/UpdateSubscriberForm"; 
-
-import { Box, CssBaseline, Typography, List, IconButton } from "@mui/material";
-import StaticBars from "../components/StaticBars";
+import { Box,  Typography, List, IconButton } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-
 import { columns } from "../mui_components/SubscribersColumns";
 
 export default function SubscriberPage() {
@@ -111,11 +107,7 @@ export default function SubscriberPage() {
 
   return (
     <>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <StaticBars />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
+        
 
           <Box display="flex" alignItems="center" gap={2}>
             <Button
@@ -240,8 +232,6 @@ export default function SubscriberPage() {
               />
             </div>
           </List>
-        </Box>
-      </Box>
     </>
   );
 }

@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { IconButton, styled } from "@mui/material/";
 import MuiDrawer from "@mui/material/Drawer";
@@ -8,7 +9,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Delete } from "@mui/icons-material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TeamIcon from "@mui/icons-material/People";
 import List from "@mui/material/List";
@@ -64,7 +64,11 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function SideBar({ handleDrawerClose, theme, open }) {
-  const items = ["Accueil", "Utilisateurs", "Abonnes"];
+  const items = [
+    { text: "Accueil", icon: <HomeIcon />, path: "/" },
+    { text: "Abonnés", icon: <TeamIcon />, path: "/abonnes" },
+    { text: "Utilisateurs", icon: <GroupAddIcon />, path: "/utilisateurs" },
+  ];
 
   const location = useLocation();
 
@@ -81,47 +85,24 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
       </DrawerHeader>
       <Divider />
 
-      <Divider />
       <List>
         {items.map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          <ListItem key={index} disablePadding>
             <ListItemButton
               component={Link}
-              to={
-                text.toLowerCase() === "accueil"
-                  ? "/"
-                  : `/${text.toLowerCase()}`
-              }
+              to={text.path}
               style={{ textDecoration: "none" }}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
                 bgcolor:
-                  `/${text.toLowerCase()}` === location.pathname ||
-                  (text.toLowerCase() === "accueil" &&
-                    location.pathname === "/")
-                    ? "#2B70A0"
-                    : null,
-                color:
-                  `/${text.toLowerCase()}` === location.pathname ||
-                  (text.toLowerCase() === "accueil" &&
-                    location.pathname === "/")
-                    ? "#fff"
-                    : null,
+                  `${text.path}` === location.pathname ? "#2B70A0" : null,
+                color: `${text.path}` === location.pathname ? "#fff" : null,
                 "&:hover": {
                   bgcolor:
-                    `/${text.toLowerCase()}` === location.pathname ||
-                    (text.toLowerCase() === "accueil" &&
-                      location.pathname === "/")
-                      ? "#2B70A0"
-                      : null,
-                  color:
-                    `/${text.toLowerCase()}` === location.pathname ||
-                    (text.toLowerCase() === "accueil" &&
-                      location.pathname === "/")
-                      ? "white"
-                      : null,
+                    `${text.path}` === location.pathname ? "#2B70A0" : null,
+                  color: `${text.path}` === location.pathname ? "white" : null,
                 },
               }}
             >
@@ -130,66 +111,22 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color:
-                    `/${text.toLowerCase()}` === location.pathname ||
-                    (text.toLowerCase() === "accueil" &&
-                      location.pathname === "/")
-                      ? "#fff"
-                      : null,
+                  color: `${text.path}` === location.pathname ? "#fff" : null,
                   "&:hover": {
-                    color:
-                      `/${text.toLowerCase()}` === location.pathname ||
-                      (text.toLowerCase() === "accueil" &&
-                        location.pathname === "/")
-                        ? "#fff"
-                        : null,
+                    color: `${text.path}` === location.pathname ? "#fff" : null,
                   },
                 }}
               >
-                {text.toLowerCase() === "accueil" ? (
-                  <HomeIcon />
-                ) : index % 2 === 0 ? (
-                  <TeamIcon />
-                ) : (
-                  <GroupAddIcon />
-                )}
+                {text.icon}
               </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText
+                primary={text.text}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-
-      <Divider />
-      {/* <List>
-        {["Supprimer"].map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: "block" }}>
-            <Link
-              to="/delete"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {index % 2 === 0 ? <Delete /> : <Delete />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List> */}
     </Drawer>
   );
 }

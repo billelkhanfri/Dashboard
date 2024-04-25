@@ -1,19 +1,28 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import UserPage from "./pages/UserPage";
-import SubscriberPage from "./pages/SubscriberPage";
-import DeletePage from "./pages/DeletePage";
-import Home from "./pages/Home";
+import StaticBars from "./components/StaticBars";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import { Outlet } from "react-router-dom";
+import { styled } from "@mui/material/";
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/utilisateurs" element={<UserPage />} />
-        <Route path="/abonnes" element={<SubscriberPage />} />
-        <Route path="/delete" element={<DeletePage />} />
-      </Routes>
-    </BrowserRouter>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <StaticBars />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <DrawerHeader />
+        <Outlet />
+      </Box>
+    </Box>
   );
 };
 

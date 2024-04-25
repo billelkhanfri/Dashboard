@@ -7,7 +7,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
-  CssBaseline,
   IconButton,
   List,
   Snackbar,
@@ -15,8 +14,6 @@ import {
 } from "@mui/material";
 import RegisterForm from "../components/RegisterUser";
 import UpdateUserForm from "../components/UpdateUserForm"; // Import du formulaire de mise à jour des utilisateurs
-import StaticBars from "../components/StaticBars";
-import DrawerHeader from "../mui_components/DrawerHeader";
 import Search from "../mui_components/Search";
 import SearchIconWrapper from "../mui_components/SearchIconWrapper";
 import StyledInputBase from "../mui_components/StyledInputBase";
@@ -123,11 +120,6 @@ export default function UserPage() {
 
   return (
     <>
-      <Box display="flex">
-        <CssBaseline />
-        <StaticBars />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
 
           <Box display="flex" alignItems="center" gap={2}>
             <Button
@@ -251,8 +243,6 @@ export default function UserPage() {
               />
             </div>
           </List>
-        </Box>
-      </Box>
     </>
   );
 }
