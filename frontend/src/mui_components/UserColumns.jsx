@@ -1,22 +1,22 @@
-import { Box, IconButton } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 
 const columns = [
   {
     field: "col1",
     headerName: "id",
-    width: 80,
+    width: 40,
   },
   {
     field: "col2",
     headerName: "Nom",
     flex: 1,
+    width: 80,
   },
   {
     field: "col3",
     headerName: "Prénom",
     flex: 1,
+    width: 80,
   },
   {
     field: "col4",
@@ -35,8 +35,8 @@ const columns = [
     field: "col6",
     headerName: "Abonnement",
     flex: 1,
+    width: 80,
   },
-
 ];
   
 

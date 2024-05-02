@@ -7,6 +7,11 @@ const cors = require("cors");
 // Utilisation de body-parser middleware pour analyser les requêtes JSON
 app.use(bodyParser.json());
 
+
+
+
+// Set timezone to UTC
+process.env.TZ = 'UTC';
 // Use cors middleware
 app.use(cors());
 const subscriptionRoute = require("./routes/subscriptionRoute");

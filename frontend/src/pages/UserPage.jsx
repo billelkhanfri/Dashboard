@@ -4,6 +4,8 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { frFR } from "@mui/x-data-grid/locales";
+
 import {
   Box,
   Button,
@@ -41,6 +43,7 @@ export default function UserPage() {
       const response = await axios.get("http://localhost:3000/tecmoled/");
       let allUsers = [];
       setSubscription(response.data);
+      console.log(subscription)
       // Parcourir chaque objet de la société
       response.data.forEach((company) => {
         // Extraire les utilisateurs de la société actuelle et les ajouter au tableau allUsers
@@ -54,6 +57,7 @@ export default function UserPage() {
 
       // Mettre à jour l'état avec les utilisateurs associés à leurs sociétés
       setUsers(allUsers);
+      console.log(users)
     } catch (error) {
       // Si la requête échoue, afficher le message d'erreur
       console.log(error);
@@ -120,129 +124,130 @@ export default function UserPage() {
 
   return (
     <>
-
-          <Box display="flex" alignItems="center" gap={2}>
-            <Button
-              variant="contained"
-              onClick={toggleRegisterForm}
-              color="success"
-            >
-              <AddIcon></AddIcon>
-            </Button>
-            <Typography
-              variant="h2"
-              gutterBottom
-              sx={{
-                fontWeight: "bold",
-                fontSize: "2rem",
-                marginTop: "1rem",
-                marginBottom: "1rem",
-              }}
-            >
-              Utilisateurs
-            </Typography>
-          </Box>
-          <Box sx={{ mt: 2 }}>
-            <Snackbar
-              open={deleteSuccess}
-              autoHideDuration={6000}
-              onClose={() => setDeleteSuccess(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-              <Alert
-                onClose={() => setDeleteSuccess(false)}
-                severity="success"
-                variant="filled"
-                sx={{ width: "100%" }}
-              >
-                Utilisateur supprimé avec succès
-              </Alert>
-            </Snackbar>
-          </Box>
-          {formOpen && (
-            <RegisterForm
-              subscription={subscription}
-              fetchUser={fetchUser}
-              handleRegistrationSuccess={handleRegistrationSuccess}
-              setFormOpen={setFormOpen}
-            />
-          )}
-          {/* Affichage conditionnel du formulaire de mise à jour */}
-          {updateFormOpen && (
-            <UpdateUserForm
-              subscription={subscription}
-              user={selectedUser}
-              handleUpdateSuccess={handleUpdateSuccess}
-            />
-          )}
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Nom de l'utilisateur"
-              inputProps={{ "aria-label": "search" }}
-              value={searchTerm}
-              onChange={handleSearchInputChange}
-            />
-          </Search>
-          <List>
-            <div style={{ height: 800, width: "100%" }}>
-              <DataGrid
-                rows={users
-                  .filter((u) => {
-                    const searchTermLower = searchTerm.toLowerCase();
-                    if (searchTermLower === "") return true;
-                    const usernameLower = u.lastName.toLowerCase();
-                    for (let i = 0; i < searchTermLower.length; i++) {
-                      if (usernameLower[i] !== searchTermLower[i]) return false;
-                    }
-                    return true;
-                  })
-                  .map((u) => ({
-                    id: u.id,
-                    col1: u.id,
-                    col2: u.lastName,
-                    col3: u.firstName,
-                    col4: u.email,
-                    col5: u.password,
-                    col6: u.companyName,
-                  }))}
-                columns={[
-                  ...columns,
-                  {
-                    field: "actions",
-                    headerName: "Actions",
-                    width: 240, // Ajustement de la largeur pour accueillir les deux icônes
-                    renderCell: (params) => (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          gap: 2,
-                          width: "100%", // Ajustement pour aligner correctement les icônes
-                        }}
-                      >
-                        <IconButton
-                          onClick={() => handleDeleteUser(params.row.id)}
-                          aria-label="delete"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleEditUser(params.row.id)}
-                          aria-label="edit"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Box>
-                    ),
-                    headerAlign: "center",
-                  },
-                ]}
-              />
-            </div>
-          </List>
+      <Box display="flex" alignItems="center" gap={2}>
+        <Button
+          variant="contained"
+          onClick={toggleRegisterForm}
+          color="success"
+        >
+          <AddIcon></AddIcon>
+        </Button>
+        <Typography
+          variant="h2"
+          gutterBottom
+          sx={{
+            fontWeight: "bold",
+            fontSize: "2rem",
+            marginTop: "1rem",
+            marginBottom: "1rem",
+          }}
+        >
+          Utilisateurs
+        </Typography>
+      </Box>
+      <Box sx={{ mt: 2 }}>
+        <Snackbar
+          open={deleteSuccess}
+          autoHideDuration={6000}
+          onClose={() => setDeleteSuccess(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={() => setDeleteSuccess(false)}
+            severity="success"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            Utilisateur supprimé avec succès
+          </Alert>
+        </Snackbar>
+      </Box>
+      {formOpen && (
+        <RegisterForm
+          subscription={subscription}
+          fetchUser={fetchUser}
+          handleRegistrationSuccess={handleRegistrationSuccess}
+          setFormOpen={setFormOpen}
+        />
+      )}
+      {/* Affichage conditionnel du formulaire de mise à jour */}
+      {updateFormOpen && (
+        <UpdateUserForm
+          subscription={subscription}
+          user={selectedUser}
+          handleUpdateSuccess={handleUpdateSuccess}
+          setUpdateFormOpen={setUpdateFormOpen}
+        />
+      )}
+      <Search>
+        <SearchIconWrapper>
+          <SearchIcon />
+        </SearchIconWrapper>
+        <StyledInputBase
+          placeholder="Nom de l'utilisateur"
+          inputProps={{ "aria-label": "search" }}
+          value={searchTerm}
+          onChange={handleSearchInputChange}
+        />
+      </Search>
+      <List>
+        <div style={{ height: 800, width: "100%" }}>
+          <DataGrid
+            localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
+            rows={users
+              .filter((u) => {
+                const searchTermLower = searchTerm.toLowerCase();
+                if (searchTermLower === "") return true;
+                const usernameLower = u.lastName.toLowerCase();
+                for (let i = 0; i < searchTermLower.length; i++) {
+                  if (usernameLower[i] !== searchTermLower[i]) return false;
+                }
+                return true;
+              })
+              .map((u) => ({
+                id: u.id,
+                col1: u.id,
+                col2: u.lastName,
+                col3: u.firstName,
+                col4: u.email,
+                col5: u.password,
+                col6: u.companyName,
+              }))}
+            columns={[
+              ...columns,
+              {
+                field: "actions",
+                headerName: "Actions",
+                width: 240, // Ajustement de la largeur pour accueillir les deux icônes
+                renderCell: (params) => (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: 2,
+                      width: "100%", // Ajustement pour aligner correctement les icônes
+                    }}
+                  >
+                    <IconButton
+                      onClick={() => handleDeleteUser(params.row.id)}
+                      aria-label="delete"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleEditUser(params.row.id)}
+                      aria-label="edit"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                ),
+                headerAlign: "center",
+              },
+            ]}
+          />
+        </div>
+      </List>
     </>
   );
 }

@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Outlet } from "react-router-dom";
 import { styled } from "@mui/material/";
+import { useState } from "react";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -14,13 +15,18 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 const App = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSearchInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <StaticBars />
+      <StaticBars searchTerm={searchTerm} handleSearchInputChange={handleSearchInputChange} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Outlet />
+        <Outlet searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </Box>
     </Box>
   );

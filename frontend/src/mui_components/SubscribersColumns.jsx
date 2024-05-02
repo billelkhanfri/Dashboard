@@ -1,4 +1,4 @@
-import { Box} from "@mui/material";
+import { Box } from "@mui/material";
 
 import { green, red } from "@mui/material/colors";
 
@@ -7,7 +7,7 @@ const columns = [
     field: "col1",
     headerName: "id",
     headerAlign: "center",
-
+    width: "1",
     renderCell: (params) => (
       <div
         style={{
@@ -43,7 +43,7 @@ const columns = [
       return (
         <Box
           sx={{
-            backgroundColor: params.row.col3 ? green[500] : red[500], // Utilize red color if inactive, otherwise green
+            backgroundColor: params.row.col3 ? green[300] : red[300],
             width: "100%",
             height: "100%",
             display: "flex",
@@ -61,7 +61,7 @@ const columns = [
   {
     field: "col4",
     headerName: "Date de payment",
-    width: 150,
+    width: 100,
     headerAlign: "center",
     renderCell: (params) => (
       <div
@@ -79,7 +79,7 @@ const columns = [
     headerName: "Date de début",
     flex: 1,
     headerAlign: "center",
-    width: 150,
+    width: 100,
 
     renderCell: (params) => (
       <div
@@ -110,10 +110,23 @@ const columns = [
       </div>
     ),
   },
-  
- 
+  {
+    field: "col8",
+    headerName: "Utilisateur en ligne",
+    width: 80,
+
+    flex: 1,
+    headerAlign: "center",
+    renderCell: (params) => (
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        {params.value}
+      </div>
+    ),
+  },
 ];
-
-
 
 export { columns };

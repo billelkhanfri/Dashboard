@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Typography,
@@ -8,25 +7,27 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
 
-export default function UpdateUserForm({ user, handleUpdateSuccess, subscription }) {
-  const [formData, setFormData] = useState({
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    password: user.password,
-    subscriptionsId: user.subscriptionsId,
+export default function UpdateUserForm({
+  user,
+  handleUpdateSuccess,
+  subscription,
+  setUpdateFormOpen,
+}) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: user, // Use user object directly for default values
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (formData) => {
     try {
       const response = await axios.put(
         `http://localhost:3000/tecmoled/user/${formData.id}`,
@@ -42,7 +43,7 @@ export default function UpdateUserForm({ user, handleUpdateSuccess, subscription
   };
 
   return (
-    <Box>
+    <Box maxWidth={"50%"} margin={"auto"}>
       <Box
         display="flex"
         justifyContent="center"
@@ -52,78 +53,106 @@ export default function UpdateUserForm({ user, handleUpdateSuccess, subscription
         <Typography variant="h6" gutterBottom>
           Mettre à jour l'utilisateur :{" "}
           <span style={{ color: "green" }}>
-            {formData.firstName} {formData.lastName}
+            {user.firstName} {user.lastName}
           </span>{" "}
           de{" "}
           <span style={{ color: "blue" }}>
             {
-              subscription.find((sub) => sub.id === formData.subscriptionsId)
+              subscription.find((sub) => sub.id === user.subscriptionsId)
                 ?.clientName
             }
           </span>
         </Typography>
       </Box>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          name="firstName"
-          label="Prénom"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          name="lastName"
-          label="Nom"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          name="email"
-          label="Email"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formData.email}
-          onChange={handleChange}
-          type="email"
-          required
-        />
-        <TextField
-          name="password"
-          label="Mot de passe"
-          variant="outlined"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-
-        <FormControl fullWidth margin="normal" required>
-          <InputLabel id="subscriptionsId-label">Client</InputLabel>
-          <Select
-            labelId="subscriptionsId-label"
-            name="subscriptionsId"
-            value={formData.subscriptionsId}
-            onChange={handleChange}
-            label="Client"
-          >
-            {subscription.map((companyName, index) => (
-              <MenuItem key={index} value={companyName.id}>
-                {companyName.clientName}
-              </MenuItem>
-            ))}
-          </Select>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Prénom"
+            variant="outlined"
+            fullWidth
+            {...register("firstName", {
+              required: "Le nom de l'utilisateur est requis",
+            })}
+          />
+          <FormHelperText error>
+            {errors.firstName && errors.firstName.message}
+          </FormHelperText>
         </FormControl>
-        <Box sx={{ my: 3, display: "flex", justifyContent: "flex-end" }}>
+
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Nom"
+            variant="outlined"
+            fullWidth
+            {...register("lastName", {
+              required: "Le nom de l'utilisateur est requis",
+            })}
+          />
+          <FormHelperText error>
+            {errors.lastName && errors.lastName.message}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Email"
+            variant="outlined"
+            fullWidth
+            {...register("email", {
+              required: "un email est requis",
+            })}
+          />
+          <FormHelperText error>
+            {errors.email && errors.email.message}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal">
+          <TextField
+            name="password"
+            label="Mot de passe"
+            variant="outlined"
+            type="password"
+            fullWidth
+            {...register("password", {
+              required: "un mot de passe est requis",
+            })}
+          />
+          <FormHelperText error>
+            {errors.password && errors.password.message}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="subscriptionsId-label">Client</InputLabel>
+          <Controller
+            name="subscriptionsId"
+            control={control}
+            defaultValue={user.subscriptionsId} // Set default value directly
+            rules={{ required: "Le nom du client est requis", color: "red" }}
+            render={({ field }) => (
+              <Select {...field} labelId="subscriptionsId-label" label="Client">
+                {subscription.map((companyName, index) => (
+                  <MenuItem key={index} value={companyName.id}>
+                    {companyName.clientName}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          />
+          <FormHelperText error>
+            {errors.subscriptionsId && errors.subscriptionsId.message}
+          </FormHelperText>
+        </FormControl>
+        <Box sx={{ my: 3, display: "flex", justifyContent: "space-between" }}>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => setUpdateFormOpen(false)}
+          >
+            Annuler
+          </Button>
+
           <Button type="submit" variant="contained" color="primary">
             Mettre à jour
           </Button>

@@ -1,52 +1,52 @@
-import { useState } from "react";
 import {
   Box,
   Typography,
   TextField,
   Button,
-  Select,
-  MenuItem,
   FormControl,
-  InputLabel,
+  FormHelperText,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import axios from "axios";
 import SendIcon from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
+import { useForm, Controller } from "react-hook-form";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+
+
 
 export default function UpdateSubscriberForm({
   subscriber,
   handleUpdateSuccess,
+  setUpdateFormOpen,
 }) {
-  const [formData, setFormData] = useState(subscriber);
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({ defaultValues: subscriber });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
+  const onSubmit = async (formData) => {
     const confirmation = window.confirm(
       "Êtes-vous sûr de vouloir modifier cet abonné ?"
     );
 
     if (confirmation) {
-      e.preventDefault();
       try {
-        // Format date fields before sending to the server
-        const formattedFormData = {
-          ...formData,
-          paymentDate: formatDate(formData.paymentDate),
-          startDate: formatDate(formData.startDate),
-          endDate: formatDate(formData.endDate),
-        };
-
+     
         const response = await axios.put(
           `http://localhost:3000/tecmoled/subscriber/${subscriber.id}`,
-          formattedFormData
-        );
+formData        );
 
-        console.log("Update successful:", response.data.message);
-        handleUpdateSuccess(response.data.message, "success");
+        console.log("Data updated:", formData);
+        console.log("Update successful:", response.data.success);
+        handleUpdateSuccess(response.data.success, "success");
       } catch (error) {
         console.error("Update failed:", error.response.data);
         handleUpdateSuccess(error.response.data.error, "error");
@@ -54,170 +54,182 @@ export default function UpdateSubscriberForm({
     }
   };
 
-  // Function to format date in YYYY-MM-DD format
-  const formatDate = (date) => {
-    const formattedDate = new Date(date);
-    return formattedDate.toISOString().split("T")[0];
-  };
-
   return (
-    <Box>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <Typography variant="h6" gutterBottom>
-          Modifier Abonné
+    <LocalizationProvider dateAdapter={AdapterDayjs} locale="fr">
+      <Typography variant="h6" gutterBottom textAlign="center">
+        Modifier l'abonné :{" "}
+        <Typography component="span" variant="body1" color="primary">
+          {subscriber?.clientName}
         </Typography>
-      </Box>
-      <form onSubmit={handleSubmit}>
-        <FormControl fullWidth margin="normal">
-          <TextField
-            id="clientName"
-            name="clientName"
-            variant="outlined"
-            label="Nom du client"
-            fullWidth
-            value={formData.clientName}
-            onChange={handleChange}
-            required
-          />
-        </FormControl>
+      </Typography>
+      <Box maxWidth={"50%"} margin={"auto"}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="clientName"
+              {...register("clientName", {
+                required: "Le nom du client est requis",
+              })}
+              variant="outlined"
+              label="Nom du client"
+              fullWidth
+            />
+            <FormHelperText error>
+              {errors.clientName && errors.clientName.message}
+            </FormHelperText>
+          </FormControl>
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel htmlFor="subscrState">Abonnement actif</InputLabel>
-          <Select
-            id="subscrState"
-            name="subscrState"
-            variant="outlined"
-            fullWidth
-            value={formData.subscrState}
-            onChange={handleChange}
-            required
-          >
-            <MenuItem value={true}>Oui</MenuItem>
-            <MenuItem value={false}>Non</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">
+              Abonnement
+            </FormLabel>
+            <Controller
+              name="subscrState"
+              control={control}
+              defaultValue={subscriber?.subscrState.toString() || "true"} // Ensure it's a string
+              render={({ field }) => (
+                <RadioGroup
+                  {...field}
+                  value={field.value}
+                  onChange={field.onChange}
+                >
+                  <FormControlLabel
+                    value="true"
+                    control={<Radio />}
+                    label="Actif"
+                  />
+                  <FormControlLabel
+                    value="false"
+                    control={<Radio />}
+                    label="Inactif"
+                  />
+                </RadioGroup>
+              )}
+            />
+            <FormHelperText error>
+              {errors.subscrState && errors.subscrState.message}
+            </FormHelperText>
+          </FormControl>
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel
-            htmlFor="paymentDate"
-            style={{
-              position: "absolute",
-              top: "-30px",
-              left: "-6px",
-              background: "#FFF",
-              padding: "0 4px",
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="paymentDate"
+              type="date"
+              label="Date de paiement"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("paymentDate", {
+                required: "La date de paiement est requise",
+              })}
+              variant="outlined"
+              fullWidth
+            />
+            <FormHelperText error>
+              {errors.paymentDate && errors.paymentDate.message}
+            </FormHelperText>
+          </FormControl>
+
+          <Box display="flex" gap={2}>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                id="startDate"
+                type="date"
+                label="Date de début"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                {...register("startDate", {
+                  required: "La date de début paiement est requise",
+                })}
+                variant="outlined"
+                fullWidth
+              />
+              <FormHelperText error>
+                {errors.startDate && errors.startDate.message}
+              </FormHelperText>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <TextField
+                id="endDate"
+                type="date"
+                label="Date de fin"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                {...register("endDate", {
+                  required: "La date de fin paiement est requise",
+                })}
+                variant="outlined"
+                fullWidth
+              />
+              <FormHelperText error>
+                {errors.endDate && errors.endDate.message}
+              </FormHelperText>
+            </FormControl>
+          </Box>
+
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="maxUser"
+              type="number"
+              variant="outlined"
+              label="Nombre maximum d'utilisateurs"
+              fullWidth
+              inputProps={{ min: 0 }}
+              {...register("maxUser", {
+                required: "Le nombre maximum d'utilisateurs est requis",
+              })}
+            />
+            <FormHelperText error>
+              {errors.maxUser && errors.maxUser.message}
+            </FormHelperText>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="nbrUserOnline"
+              type="number"
+              variant="outlined"
+              label="Nombre d'utilisateurs en ligne"
+              fullWidth
+              inputProps={{ min: 0 }}
+              {...register("nbrUserOnline", {
+                required: "Le nombre d'utilisateurs en ligne est requis",
+              })}
+            />
+            <FormHelperText error>
+              {errors.nbrUserOnline && errors.nbrUserOnline.message}
+            </FormHelperText>
+          </FormControl>
+
+          <Box
+            sx={{
+              my: 3,
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
-            Date de paiement
-          </InputLabel>
-          <TextField
-            id="paymentDate"
-            name="paymentDate"
-            type="date"
-            variant="outlined"
-            fullWidth
-            value={formData.paymentDate}
-            onChange={handleChange}
-            required
-          />
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-          <InputLabel
-            htmlFor="startDate"
-            style={{
-              position: "absolute",
-              top: "-30px",
-              left: "-6px",
-              background: "#FFF",
-              padding: "0 4px",
-            }}
-          >
-            Date de début
-          </InputLabel>
-          <TextField
-            id="startDate"
-            name="startDate"
-            type="date"
-            variant="outlined"
-            fullWidth
-            value={formData.startDate}
-            onChange={handleChange}
-            required
-          />
-        </FormControl>
-
-        <FormControl fullWidth margin="normal">
-          <InputLabel
-            htmlFor="endDate"
-            style={{
-              position: "absolute",
-              top: "-30px",
-              left: "-6px",
-              background: "#FFF",
-              padding: "0 4px",
-            }}
-          >
-            Date de fin
-          </InputLabel>
-          <TextField
-            id="endDate"
-            name="endDate"
-            type="date"
-            variant="outlined"
-            fullWidth
-            value={formData.endDate}
-            onChange={handleChange}
-            required
-          />
-        </FormControl>
-
-        <FormControl fullWidth margin="normal">
-          <TextField
-            id="maxUser"
-            name="maxUser"
-            variant="outlined"
-            fullWidth
-            type="number"
-            value={formData.maxUser}
-            onChange={handleChange}
-            label=" Nombre maximum d'utilisateurs"
-            required
-          />
-        </FormControl>
-
-        <FormControl fullWidth margin="normal">
-          <TextField
-            id="nbrUserOnline"
-            name="nbrUserOnline"
-            variant="outlined"
-            fullWidth
-            type="number"
-            value={formData.nbrUserOnline}
-            onChange={handleChange}
-            label="Nombre d'utilisateurs en ligne"
-            required
-          />
-        </FormControl>
-
-        <Box sx={{ my: 3, display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
-            endIcon={<SendIcon />}
-          >
-            Mettre à jour
-          </Button>
-        </Box>
-      </form>
-      <Box>
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={() => setUpdateFormOpen(false)}
+            >
+              Annuler
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              endIcon={<SendIcon />}
+            >
+              Mettre à jour
+            </Button>
+          </Box>
+        </form>
         <Divider sx={{ my: 2 }} />
       </Box>
-    </Box>
+    </LocalizationProvider>
   );
 }

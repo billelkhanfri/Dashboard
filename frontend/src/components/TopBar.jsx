@@ -1,4 +1,4 @@
-import { Toolbar, IconButton,  styled } from "@mui/material/";
+import { Toolbar, IconButton,  styled ,Stack} from "@mui/material/";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar from "@mui/material/AppBar";
 
@@ -29,7 +29,7 @@ export default function TopBar({ open, handleDrawerOpen }) {
       sx={{ backgroundColor: "rgb(18, 51, 91)" }}
     >
       <Toolbar>
-        <div style={{ flex: 1 }}>
+        <Stack >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -39,15 +39,14 @@ export default function TopBar({ open, handleDrawerOpen }) {
           >
             <MenuIcon />
           </IconButton>
-        </div>
-        <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+        </Stack>
+        <Stack >
           <img
             src="https://tecmoled.com/wp-content/uploads/2022/09/logo_300dpi.png"
             alt="TECMOLED Logo"
             style={{ width: "150px" }}
           />
-        </div>
-        <div style={{ flex: 1 }}></div>
+        </Stack>
       </Toolbar>
     </AppBar>
   );

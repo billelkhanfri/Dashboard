@@ -19,12 +19,10 @@ const getAllSubscriptionsWithUsers = async (req, res) => {
       "Erreur lors de la récupération des abonnements avec les utilisateurs :",
       error
     );
-    res
-      .status(500)
-      .json({
-        error:
-          "Erreur lors de la récupération des abonnements avec les utilisateurs",
-      });
+    res.status(500).json({
+      error:
+        "Erreur lors de la récupération des abonnements avec les utilisateurs",
+    });
   }
 };
 
@@ -116,7 +114,7 @@ const updateSubscriber = async (req, res) => {
     // Retourner une réponse de réussite avec l'abonné mis à jour
     res
       .status(200)
-      .json({ message: "Abonné mis à jour avec succès", subscriber });
+      .json({ success: "Abonné mis à jour avec succès", subscriber });
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'abonné :", error);
     res
