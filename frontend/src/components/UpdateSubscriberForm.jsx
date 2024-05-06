@@ -9,9 +9,9 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Stack
 } from "@mui/material";
 import axios from "axios";
-import SendIcon from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
 import { useForm, Controller } from "react-hook-form";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -29,7 +29,7 @@ export default function UpdateSubscriberForm({
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({ defaultValues: subscriber });
 
   const onSubmit = async (formData) => {
@@ -204,29 +204,27 @@ formData        );
             </FormHelperText>
           </FormControl>
 
-          <Box
-            sx={{
-              my: 3,
-              display: "flex",
-              justifyContent: "space-between",
-            }}
+          <Stack
+            gap={2}
+            flexDirection={"row"}
+            alignItems={"flex-end"}
+            justifyContent={"flex-end"}
+            my="20px"
           >
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={() => setUpdateFormOpen(false)}
-            >
+            <Button variant="outlined" onClick={() => setUpdateFormOpen(false)}>
               Annuler
             </Button>
             <Button
               type="submit"
               variant="contained"
-              color="secondary"
-              endIcon={<SendIcon />}
+              color="primary"
+              disabled={
+                Object.keys(dirtyFields).length === 0 
+              }
             >
               Mettre à jour
             </Button>
-          </Box>
+          </Stack>
         </form>
         <Divider sx={{ my: 2 }} />
       </Box>

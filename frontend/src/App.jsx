@@ -1,9 +1,13 @@
-import StaticBars from "./components/StaticBars";
+import TopBar from "./components/TopBar";
+import SideBar from "./components/SideBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Outlet } from "react-router-dom";
-import { styled } from "@mui/material/";
 import { useState } from "react";
+
+import { styled } from "@mui/material/";
+import { useTheme } from "@mui/material/styles";
+import { Outlet, Route, Routes } from "react-router-dom";
+
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -14,19 +18,41 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-const App = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value);
+const App = ({ searchTerm,
+              handleSearchInputChange} ) => {
+ 
+  
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
   };
 
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <StaticBars searchTerm={searchTerm} handleSearchInputChange={handleSearchInputChange} />
+      <TopBar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        searchTerm={searchTerm}
+        handleSearchInputChange={handleSearchInputChange}
+      />
+      <SideBar
+        theme={theme}
+        open={open}
+        handleDrawerClose={handleDrawerClose}
+      />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Outlet searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+        <Outlet
+          
+        ></Outlet>
+       
       </Box>
     </Box>
   );

@@ -18,9 +18,9 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Stack
 } from "@mui/material";
 import axios from "axios";
-import SendIcon from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
 import { useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -245,23 +245,21 @@ export default function SubscriberForm({
             </FormHelperText>
           </FormControl>
 
-          <Box sx={{ my: 3, display: "flex", justifyContent: "space-between" }}>
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={() => setFormOpen(false)}
-            >
+          <Stack
+            gap={2}
+            flexDirection={"row"}
+            alignItems={"flex-end"}
+            justifyContent={"flex-end"}
+            my="20px"
+          >
+            <Button variant="outlined" onClick={() => setFormOpen(false)}>
               Annuler
             </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              endIcon={<SendIcon />}
-            >
-              Ajouter
+
+            <Button type="submit" variant="contained" color="primary">
+             Envoyer
             </Button>
-          </Box>
+          </Stack>
         </form>
         <Box>
           <Divider sx={{ my: 2 }} />

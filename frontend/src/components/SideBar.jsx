@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { IconButton, styled } from "@mui/material/";
 import MuiDrawer from "@mui/material/Drawer";
@@ -97,11 +96,11 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
                 bgcolor:
-                  `${text.path}` === location.pathname ? "#2B70A0" : null,
+                  `${text.path}` === location.pathname ? "#1976D2" : null,
                 color: `${text.path}` === location.pathname ? "#fff" : null,
                 "&:hover": {
                   bgcolor:
-                    `${text.path}` === location.pathname ? "#2B70A0" : null,
+                    `${text.path}` === location.pathname ? "#1976D2" : null,
                   color: `${text.path}` === location.pathname ? "white" : null,
                 },
               }}

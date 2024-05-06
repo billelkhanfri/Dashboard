@@ -1,25 +1,19 @@
 import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
-import Search from "../mui_components/Search";
-import SearchIconWrapper from "../mui_components/SearchIconWrapper";
-import StyledInputBase from "../mui_components/StyledInputBase";
-import AddIcon from "@mui/icons-material/Add";
-import Button from "@mui/material/Button";
 import SubscriberForm from "../components/RegisterSubscriber";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdateSubscriberForm from "../components/UpdateSubscriberForm";
-import { Box, Typography, List, IconButton } from "@mui/material";
+import { Box, Typography, List, IconButton, } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { columns } from "../mui_components/SubscribersColumns";
 import { frFR } from "@mui/x-data-grid/locales";
+import Fab from "@mui/material/Fab";
 
-export default function SubscriberPage() {
+export default function SubscriberPage({searchTerm}) {
   const [subscribers, setSubscribers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [updateFormOpen, setUpdateFormOpen] = useState(false);
@@ -27,9 +21,8 @@ export default function SubscriberPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
 
-  const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+console.log((new Date("2024-07-05") - new Date("2024-05-05"))/1000/3600/24/30);
+
 
   const fetchSubscribers = async () => {
     try {
@@ -58,7 +51,6 @@ export default function SubscriberPage() {
       setFormOpen(false);
     }
   };
-
   const handleDeleteSubscriber = async (subscriberId) => {
     const confirmation = window.confirm(
       "Êtes-vous sûr de vouloir supprimer cet abonné ?"
@@ -86,7 +78,6 @@ export default function SubscriberPage() {
     setFormOpen(false);
   };
   const handleEditSubscriber = (subscriberId) => {
-    console.log("edited " + subscriberId);
     const subscriberToUpdate = subscribers.find(
       (subscriber) => subscriber.id === subscriberId
     );
@@ -104,14 +95,12 @@ export default function SubscriberPage() {
 
   return (
     <>
-      <Box display="flex" alignItems="center" gap={2}>
-        <Button
-          variant="contained"
-          onClick={toggleSubscriberForm}
-          color="secondary"
-        >
-          <AddIcon></AddIcon>
-        </Button>
+      <Box
+        display="flex"
+        alignItems="center"
+        gap={2}
+        justifyContent={"space-between"}
+      >
         <Typography
           variant="h2"
           gutterBottom
@@ -124,6 +113,15 @@ export default function SubscriberPage() {
         >
           Abonnées
         </Typography>
+        <Fab
+          variant="extended"
+          onClick={toggleSubscriberForm}
+          color="primary"
+          size="medium"
+        >
+          {/* <AddIcon></AddIcon> */}
+          Ajouter
+        </Fab>
       </Box>
       <Snackbar
         open={deleteSuccess}
@@ -156,18 +154,6 @@ export default function SubscriberPage() {
           setUpdateFormOpen={setUpdateFormOpen}
         />
       )}
-
-      <Search>
-        <SearchIconWrapper>
-          <SearchIcon />
-        </SearchIconWrapper>
-        <StyledInputBase
-          placeholder="Search…"
-          inputProps={{ "aria-label": "search" }}
-          value={searchTerm}
-          onChange={handleSearchInputChange}
-        />
-      </Search>
 
       <List>
         <div style={{ height: 800, width: "100%" }}>
@@ -210,16 +196,16 @@ export default function SubscriberPage() {
                     }}
                   >
                     <IconButton
-                      onClick={() => handleDeleteSubscriber(params.row.id)}
-                      aria-label="delete"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    <IconButton
                       onClick={() => handleEditSubscriber(params.row.id)}
                       aria-label="edit"
                     >
                       <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDeleteSubscriber(params.row.id)}
+                      aria-label="delete"
+                    >
+                      <DeleteIcon color="error" />
                     </IconButton>
                   </Box>
                 ),

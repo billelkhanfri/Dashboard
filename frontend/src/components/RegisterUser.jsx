@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 
 import {
@@ -11,9 +10,9 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  Stack
 } from "@mui/material";
 import axios from "axios";
-import SendIcon from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
 
 export default function RegisterForm({
@@ -137,24 +136,15 @@ export default function RegisterForm({
           </FormHelperText>
         </FormControl>
 
-        <Box sx={{ my: 3, display: "flex", justifyContent: "space-between" }}>
-          <Button
-            variant="contained"
-            color="warning"
-            onClick={() => setFormOpen(false)}
-          >
+        <Stack  gap = {2} flexDirection={"row"} alignItems={"flex-end"} justifyContent={"flex-end"} my="20px">
+          <Button variant="outlined" onClick={() => setFormOpen(false)}>
             Annuler
           </Button>
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="success"
-            endIcon={<SendIcon />}
-          >
-            Ajouter
+          <Button type="submit" variant="contained" color="primary">
+           Envoyer
           </Button>
-        </Box>
+        </Stack>
       </form>
 
       <Box>

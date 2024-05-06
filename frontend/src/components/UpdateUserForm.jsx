@@ -8,6 +8,7 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  Stack
 } from "@mui/material";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
@@ -22,7 +23,7 @@ export default function UpdateUserForm({
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, dirtyFields},
   } = useForm({
     defaultValues: user, // Use user object directly for default values
   });
@@ -78,7 +79,6 @@ export default function UpdateUserForm({
             {errors.firstName && errors.firstName.message}
           </FormHelperText>
         </FormControl>
-
         <FormControl fullWidth margin="normal">
           <TextField
             label="Nom"
@@ -92,7 +92,6 @@ export default function UpdateUserForm({
             {errors.lastName && errors.lastName.message}
           </FormHelperText>
         </FormControl>
-
         <FormControl fullWidth margin="normal">
           <TextField
             label="Email"
@@ -106,7 +105,6 @@ export default function UpdateUserForm({
             {errors.email && errors.email.message}
           </FormHelperText>
         </FormControl>
-
         <FormControl fullWidth margin="normal">
           <TextField
             name="password"
@@ -122,7 +120,6 @@ export default function UpdateUserForm({
             {errors.password && errors.password.message}
           </FormHelperText>
         </FormControl>
-
         <FormControl fullWidth margin="normal">
           <InputLabel id="subscriptionsId-label">Client</InputLabel>
           <Controller
@@ -144,19 +141,24 @@ export default function UpdateUserForm({
             {errors.subscriptionsId && errors.subscriptionsId.message}
           </FormHelperText>
         </FormControl>
-        <Box sx={{ my: 3, display: "flex", justifyContent: "space-between" }}>
+        <Stack
+          gap={2}
+          flexDirection={"row"}
+          alignItems={"flex-end"}
+          justifyContent={"flex-end"}
+          my="20px"
+        >
+          {" "}
           <Button
-            variant="contained"
-            color="warning"
+            variant="outlined"
             onClick={() => setUpdateFormOpen(false)}
           >
             Annuler
           </Button>
-
-          <Button type="submit" variant="contained" color="primary">
+          <Button type="submit" variant="contained" color="primary" disabled ={Object.keys(dirtyFields).length === 0}>
             Mettre à jour
           </Button>
-        </Box>
+        </Stack>{" "}
       </form>
     </Box>
   );

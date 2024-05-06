@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-
 import {
   Route,
   RouterProvider,
@@ -13,20 +12,66 @@ import UserPage from "./pages/UserPage";
 import SubscriberPage from "./pages/SubscriberPage";
 import DeletePage from "./pages/DeletePage";
 import Home from "./pages/Home";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      <Route index  element={<Home />} />
-      <Route path="/utilisateurs" element={<UserPage />} />
-      <Route path="/abonnes" element={<SubscriberPage />} />
-      <Route path="/delete" element={<DeletePage />} />
-    </Route>
-  )
-);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
-);
+const Root = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "IBM Plex Sans, sans-serif" // Replace 'Your Font Family' with your chosen font
+  },
+});
+ 
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route
+        path="/"
+        element={
+          <App
+            searchTerm={searchTerm}
+            handleSearchInputChange={handleSearchInputChange}
+          />
+        }
+      >
+        <Route index element={<Home />} />
+        <Route
+          path="/utilisateurs"
+          element={
+            <UserPage
+              searchTerm={searchTerm}
+              handleSearchInputChange={handleSearchInputChange}
+            />
+          }
+        />
+        <Route
+          path="/abonnes"
+          element={
+            <SubscriberPage
+              searchTerm={searchTerm}
+              handleSearchInputChange={handleSearchInputChange}
+            />
+          }
+        />
+        <Route path="/delete" element={<DeletePage />} />
+      </Route>
+    )
+  );
+
+  return (
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+      ,
+    </React.StrictMode>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Root />);

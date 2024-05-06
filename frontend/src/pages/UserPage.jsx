@@ -1,32 +1,24 @@
 import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { frFR } from "@mui/x-data-grid/locales";
-
 import {
   Box,
-  Button,
-  IconButton,
+Fab,  IconButton,
   List,
   Snackbar,
   Typography,
 } from "@mui/material";
 import RegisterForm from "../components/RegisterUser";
-import UpdateUserForm from "../components/UpdateUserForm"; // Import du formulaire de mise à jour des utilisateurs
-import Search from "../mui_components/Search";
-import SearchIconWrapper from "../mui_components/SearchIconWrapper";
-import StyledInputBase from "../mui_components/StyledInputBase";
-import SearchIcon from "@mui/icons-material/Search";
+import UpdateUserForm from "../components/UpdateUserForm"; 
 import { Alert } from "@mui/material";
 import { columns } from "../mui_components/UserColumns";
 
-export default function UserPage() {
+export default function UserPage({ searchTerm , handleSearchInputChange}) {
   const [users, setUsers] = useState([]);
   const [subscription, setSubscription] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [updateFormOpen, setUpdateFormOpen] = useState(false); // Nouvel état pour gérer l'affichage du formulaire de mise à jour
@@ -34,16 +26,14 @@ export default function UserPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
 
-  const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  
 
   const fetchUser = async () => {
     try {
       const response = await axios.get("http://localhost:3000/tecmoled/");
       let allUsers = [];
       setSubscription(response.data);
-      console.log(subscription)
+      console.log(subscription);
       // Parcourir chaque objet de la société
       response.data.forEach((company) => {
         // Extraire les utilisateurs de la société actuelle et les ajouter au tableau allUsers
@@ -57,7 +47,7 @@ export default function UserPage() {
 
       // Mettre à jour l'état avec les utilisateurs associés à leurs sociétés
       setUsers(allUsers);
-      console.log(users)
+      console.log(users);
     } catch (error) {
       // Si la requête échoue, afficher le message d'erreur
       console.log(error);
@@ -70,6 +60,7 @@ export default function UserPage() {
 
   const toggleRegisterForm = () => {
     setFormOpen((prev) => !prev);
+    setUpdateFormOpen(false);
   };
 
   const handleRegistrationSuccess = (message, severity) => {
@@ -87,6 +78,7 @@ export default function UserPage() {
     // Fonction pour afficher/masquer le formulaire de mise à jour
     setUpdateFormOpen((prev) => !prev);
     setSelectedUser(user); // Stocke les données de l'utilisateur sélectionné
+    setFormOpen(false);
   };
 
   const handleUpdateSuccess = (message, severity) => {
@@ -124,14 +116,12 @@ export default function UserPage() {
 
   return (
     <>
-      <Box display="flex" alignItems="center" gap={2}>
-        <Button
-          variant="contained"
-          onClick={toggleRegisterForm}
-          color="success"
-        >
-          <AddIcon></AddIcon>
-        </Button>
+      <Box
+        display="flex"
+        alignItems="center"
+        gap={2}
+        justifyContent={"space-between"}
+      >
         <Typography
           variant="h2"
           gutterBottom
@@ -144,6 +134,16 @@ export default function UserPage() {
         >
           Utilisateurs
         </Typography>
+
+        <Fab
+          variant="extended"
+          onClick={toggleRegisterForm}
+          color="primary"
+          size="medium"
+        >
+          {/* <AddIcon></AddIcon> */}
+          Ajouter
+        </Fab>
       </Box>
       <Box sx={{ mt: 2 }}>
         <Snackbar
@@ -179,17 +179,7 @@ export default function UserPage() {
           setUpdateFormOpen={setUpdateFormOpen}
         />
       )}
-      <Search>
-        <SearchIconWrapper>
-          <SearchIcon />
-        </SearchIconWrapper>
-        <StyledInputBase
-          placeholder="Nom de l'utilisateur"
-          inputProps={{ "aria-label": "search" }}
-          value={searchTerm}
-          onChange={handleSearchInputChange}
-        />
-      </Search>
+
       <List>
         <div style={{ height: 800, width: "100%" }}>
           <DataGrid
@@ -229,16 +219,17 @@ export default function UserPage() {
                     }}
                   >
                     <IconButton
-                      onClick={() => handleDeleteUser(params.row.id)}
-                      aria-label="delete"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    <IconButton
                       onClick={() => handleEditUser(params.row.id)}
                       aria-label="edit"
                     >
                       <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDeleteUser(params.row.id)}
+                      aria-label="delete"
+                      color="error"
+                    >
+                      <DeleteIcon />
                     </IconButton>
                   </Box>
                 ),

@@ -1,6 +1,11 @@
-import { Toolbar, IconButton,  styled ,Stack} from "@mui/material/";
+import { Toolbar, IconButton,  styled , Box, Typography} from "@mui/material/";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar from "@mui/material/AppBar";
+import Search from "../mui_components/Search";
+import SearchIconWrapper from "../mui_components/SearchIconWrapper";
+import StyledInputBase from "../mui_components/StyledInputBase";
+import SearchIcon from "@mui/icons-material/Search";
+
 
 const drawerWidth = 240;
 
@@ -21,33 +26,49 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
-export default function TopBar({ open, handleDrawerOpen }) {
+export default function TopBar({ open, handleDrawerOpen , searchTerm, handleSearchInputChange}) {
   return (
-    <AppBar
-      position="fixed"
-      open={open}
-      sx={{ backgroundColor: "rgb(18, 51, 91)" }}
-    >
-      <Toolbar>
-        <Stack >
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar
+        position="fixed"
+        open={open}
+        sx={{ backgroundColor: "#12335b" }}
+      >
+        <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={{ marginRight: 1 }}
+            size="large"
+            sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
-        </Stack>
-        <Stack >
-          <img
-            src="https://tecmoled.com/wp-content/uploads/2022/09/logo_300dpi.png"
-            alt="TECMOLED Logo"
-            style={{ width: "150px" }}
-          />
-        </Stack>
-      </Toolbar>
-    </AppBar>
+          <Typography
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          >
+            {" "}
+            <img
+              src="https://tecmoled.com/wp-content/uploads/2022/09/logo_300dpi.png"
+              alt="TECMOLED Logo"
+              style={{ width: "150px" }}
+            />{" "}
+          </Typography>
+
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Recherche..."
+                inputProps={{ "aria-label": "search" }}
+                value={searchTerm}
+                onChange={handleSearchInputChange}
+              />
+            </Search>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
