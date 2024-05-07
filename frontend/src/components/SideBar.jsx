@@ -12,7 +12,6 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TeamIcon from "@mui/icons-material/People";
 import List from "@mui/material/List";
 import HomeIcon from "@mui/icons-material/Home";
-import { useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -69,7 +68,6 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
     { text: "Utilisateurs", icon: <GroupAddIcon />, path: "/utilisateurs" },
   ];
 
-  const location = useLocation();
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -88,21 +86,13 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
         {items.map((text, index) => (
           <ListItem key={index} disablePadding>
             <ListItemButton
-              component={Link}
               to={text.path}
               style={{ textDecoration: "none" }}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
-                bgcolor:
-                  `${text.path}` === location.pathname ? "#1976D2" : null,
-                color: `${text.path}` === location.pathname ? "#fff" : null,
-                "&:hover": {
-                  bgcolor:
-                    `${text.path}` === location.pathname ? "#1976D2" : null,
-                  color: `${text.path}` === location.pathname ? "white" : null,
-                },
+               
               }}
             >
               <ListItemIcon
@@ -110,10 +100,7 @@ export default function SideBar({ handleDrawerClose, theme, open }) {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color: `${text.path}` === location.pathname ? "#fff" : null,
-                  "&:hover": {
-                    color: `${text.path}` === location.pathname ? "#fff" : null,
-                  },
+                
                 }}
               >
                 {text.icon}

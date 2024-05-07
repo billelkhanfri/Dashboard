@@ -3,11 +3,14 @@ import SideBar from "./components/SideBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useState } from "react";
+import UserPage from "./pages/UserPage";
+import SubscriberPage from "./pages/SubscriberPage";
+import DeletePage from "./pages/DeletePage";
+import Home from "./pages/Home";
 
 import { styled } from "@mui/material/";
 import { useTheme } from "@mui/material/styles";
-import { Outlet, Route, Routes } from "react-router-dom";
-
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -18,10 +21,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-const App = ({ searchTerm,
-              handleSearchInputChange} ) => {
- 
-  
+
+
+const App = () => {
+
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -38,8 +41,7 @@ const App = ({ searchTerm,
       <TopBar
         open={open}
         handleDrawerOpen={handleDrawerOpen}
-        searchTerm={searchTerm}
-        handleSearchInputChange={handleSearchInputChange}
+        
       />
       <SideBar
         theme={theme}
@@ -48,11 +50,28 @@ const App = ({ searchTerm,
       />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-
-        <Outlet
-          
-        ></Outlet>
-       
+        <BrowserRouter>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route
+              path="/utilisateurs"
+              element={
+                <UserPage
+                  
+                />
+              }
+            />
+            <Route
+              path="/abonnes"
+              element={
+                <SubscriberPage
+                  
+                />
+              }
+            />
+            <Route path="/delete" element={<DeletePage />} />
+          </Routes>
+        </BrowserRouter>
       </Box>
     </Box>
   );

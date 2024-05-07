@@ -11,8 +11,13 @@ import MuiAlert from "@mui/material/Alert";
 import { columns } from "../mui_components/SubscribersColumns";
 import { frFR } from "@mui/x-data-grid/locales";
 import Fab from "@mui/material/Fab";
+import { useSelector } from "react-redux";
 
-export default function SubscriberPage({searchTerm}) {
+
+export default function SubscriberPage() {
+const searchTerm = useSelector((state) => state.searchTerm);
+
+ 
   const [subscribers, setSubscribers] = useState([]);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
@@ -21,7 +26,6 @@ export default function SubscriberPage({searchTerm}) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
 
-console.log((new Date("2024-07-05") - new Date("2024-05-05"))/1000/3600/24/30);
 
 
   const fetchSubscribers = async () => {

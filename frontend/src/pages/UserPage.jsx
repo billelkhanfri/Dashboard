@@ -6,17 +6,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import { frFR } from "@mui/x-data-grid/locales";
 import {
   Box,
-Fab,  IconButton,
+  Fab,
+  IconButton,
   List,
   Snackbar,
   Typography,
 } from "@mui/material";
 import RegisterForm from "../components/RegisterUser";
-import UpdateUserForm from "../components/UpdateUserForm"; 
+import UpdateUserForm from "../components/UpdateUserForm";
 import { Alert } from "@mui/material";
 import { columns } from "../mui_components/UserColumns";
+import { useSelector } from "react-redux";
 
-export default function UserPage({ searchTerm , handleSearchInputChange}) {
+export default function UserPage() {
+  const searchTerm = useSelector((state) => state.searchTerm);
+
   const [users, setUsers] = useState([]);
   const [subscription, setSubscription] = useState([]);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
@@ -26,14 +30,11 @@ export default function UserPage({ searchTerm , handleSearchInputChange}) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
 
-  
-
   const fetchUser = async () => {
     try {
       const response = await axios.get("http://localhost:3000/tecmoled/");
       let allUsers = [];
       setSubscription(response.data);
-      console.log(subscription);
       // Parcourir chaque objet de la société
       response.data.forEach((company) => {
         // Extraire les utilisateurs de la société actuelle et les ajouter au tableau allUsers
@@ -47,7 +48,6 @@ export default function UserPage({ searchTerm , handleSearchInputChange}) {
 
       // Mettre à jour l'état avec les utilisateurs associés à leurs sociétés
       setUsers(allUsers);
-      console.log(users);
     } catch (error) {
       // Si la requête échoue, afficher le message d'erreur
       console.log(error);
