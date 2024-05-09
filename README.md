@@ -1,4 +1,3 @@
-# Tecmoled
 # Tableau de Bord Médical en Temps Réel
 
 Ce projet consiste en la création d'un tableau de bord web permettant de visualiser et d'analyser en temps réel les données provenant d'une API Les utilisateurs auront la possibilité d'accéder au tableau de bord via une authentification sécurisée pour consulter les données et effectuer différentes manipulations.
