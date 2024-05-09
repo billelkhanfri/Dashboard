@@ -52,12 +52,10 @@ export default function TopBar({ open, handleDrawerOpen  }) {
             <MenuIcon />
           </IconButton>
           <Typography
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+           sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, fontWeight:"bolder" }}
           >
             {" "}
-            <img
-             
-            />{" "}
+           DASHBOARD
           </Typography>
 
           <Search>

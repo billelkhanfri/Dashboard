@@ -110,7 +110,7 @@ const searchTerm = useSelector((state) => state.searchTerm);
           gutterBottom
           sx={{
             fontWeight: "bold",
-            fontSize: "2rem",
+            fontSize: "1.5rem",
             marginTop: "1rem",
             marginBottom: "1rem",
           }}
