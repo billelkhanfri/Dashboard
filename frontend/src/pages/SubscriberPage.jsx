@@ -30,7 +30,7 @@ const searchTerm = useSelector((state) => state.searchTerm);
 
   const fetchSubscribers = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/tecmoled/");
+      const response = await axios.get("http://localhost:3000/api/");
       setSubscribers(response.data);
     } catch (error) {
       console.error("Error fetching subscribers:", error);
@@ -63,7 +63,7 @@ const searchTerm = useSelector((state) => state.searchTerm);
     if (confirmation) {
       try {
         await axios.delete(
-          `http://localhost:3000/tecmoled/subscriber/${subscriberId}`
+          `http://localhost:3000/api/subscriber/${subscriberId}`
         );
         setSubscribers((prevSubscribers) =>
           prevSubscribers.filter((subscriber) => subscriber.id !== subscriberId)

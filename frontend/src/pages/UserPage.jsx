@@ -32,7 +32,7 @@ export default function UserPage() {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/tecmoled/");
+      const response = await axios.get("http://localhost:3000/api");
       let allUsers = [];
       setSubscription(response.data);
       // Parcourir chaque objet de la société
@@ -97,7 +97,7 @@ export default function UserPage() {
 
     if (confirmation) {
       try {
-        await axios.delete(`http://localhost:3000/tecmoled/user/${id}`);
+        await axios.delete(`http://localhost:3000/api/user/${id}`);
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
         console.log("Utilisateur supprimé avec succès");
         setDeleteSuccess(true); // Définit deleteSuccess sur true pour afficher l'alerte
