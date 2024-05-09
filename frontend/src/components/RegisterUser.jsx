@@ -30,7 +30,7 @@ export default function RegisterForm({
   const onSubmit = async (formData) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/tecmoled/user",
+        "http://localhost:3000/api/user",
         formData
       );
 

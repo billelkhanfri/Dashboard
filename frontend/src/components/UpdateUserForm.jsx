@@ -8,7 +8,7 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
-  Stack
+  Stack,
 } from "@mui/material";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
@@ -23,7 +23,7 @@ export default function UpdateUserForm({
     register,
     handleSubmit,
     control,
-    formState: { errors, dirtyFields},
+    formState: { errors, dirtyFields },
   } = useForm({
     defaultValues: user, // Use user object directly for default values
   });
@@ -31,7 +31,7 @@ export default function UpdateUserForm({
   const onSubmit = async (formData) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/tecmoled/user/${formData.id}`,
+        `http://localhost:3000/api/user/${formData.id}`,
         formData
       );
 
@@ -149,13 +149,15 @@ export default function UpdateUserForm({
           my="20px"
         >
           {" "}
-          <Button
-            variant="outlined"
-            onClick={() => setUpdateFormOpen(false)}
-          >
+          <Button variant="outlined" onClick={() => setUpdateFormOpen(false)}>
             Annuler
           </Button>
-          <Button type="submit" variant="contained" color="primary" disabled ={Object.keys(dirtyFields).length === 0}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={Object.keys(dirtyFields).length === 0}
+          >
             Mettre à jour
           </Button>
         </Stack>{" "}

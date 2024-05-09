@@ -41,7 +41,7 @@ export default function UpdateSubscriberForm({
       try {
      
         const response = await axios.put(
-          `http://localhost:3000/tecmoled/subscriber/${subscriber.id}`,
+          `http://localhost:3000/api/subscriber/${subscriber.id}`,
 formData        );
 
         console.log("Data updated:", formData);

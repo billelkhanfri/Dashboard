@@ -59,7 +59,7 @@ export default function SubscriberForm({
       };
 
       const response = await axios.post(
-        "http://localhost:3000/tecmoled/subscriber",
+        "http://localhost:3000/api/subscriber",
         formattedFormData
       );
       console.log("Data submitted:", formattedFormData); // Afficher toutes les données soumises
